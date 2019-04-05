@@ -1,0 +1,73 @@
+<html>
+  <head>
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+    <script type="text/javascript">
+      google.charts.load("current", { packages: ["table"] });
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.charts.setOnLoadCallback(drawGID);
+
+      function drawGID() {
+        drawSueryStringAtDiv("select A, B, C", "table_div_boys");
+      }
+
+      function drawSueryStringAtDiv(queryStr, div) {
+        var q = encodeURIComponent(queryStr);
+        var query = new google.visualization.Query(
+          `https://docs.google.com/spreadsheets/d/1S76Ryd3anUXnf1KSj1wqItdZT8YrXdlRfSb4vVp6wFQ/gviz/tq?gid=1412784282&headers=1&tq=${q}`
+        );
+        query.send(function(response) {
+          handleQueryResponse(response, div);
+        });
+      }
+
+      function handleQueryResponse(response, div) {
+        if (response.isError()) {
+          alert(
+            "Error in query: " +
+              response.getMessage() +
+              " " +
+              response.getDetailedMessage()
+          );
+          return;
+        }
+
+        var data = response.getDataTable();
+        var cssClassNames = {
+          headerRow: "headerRow"
+        };
+
+        var table = new google.visualization.Table(
+          document.getElementById(div)
+        );
+        table.draw(data, {
+          showRowNumber: false,
+          allowHtml: false,
+          width: "100%",
+          height: "100%",
+          sort: "disable",
+          cssClassNames
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <style>
+      .headerRow {
+        font-size: 12pt;
+        background: black;
+        color: white;
+      }
+      .table {
+        width: 100%;
+        display: block;
+        background: rgba(250, 200, 200, 0.5);
+        height: 300px;
+      }
+    </style>
+    <div id="table_div_boys" class="table"></div>
+  </body>
+</html>

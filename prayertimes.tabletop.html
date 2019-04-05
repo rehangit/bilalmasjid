@@ -1,0 +1,56 @@
+<html>
+  <head> </head>
+  <body>
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.1/tabletop.min.js"
+    ></script>
+    <script type="text/javascript">
+      var public_spreadsheet_url =
+        "https://docs.google.com/spreadsheets/d/1rcJ6dvxcOfk4pcgDGbxLSzUxCgvjImohff76eYV2YZQ/edit?usp=sharing";
+      function init() {
+        Tabletop.init({
+          key: public_spreadsheet_url,
+          callback: showInfo,
+          simpleSheet: true
+        });
+      }
+      window.addEventListener("DOMContentLoaded", init);
+
+      function insertHeader(row) {
+        return (
+          "<tr>" +
+          Object.keys(row).map(function(cell) {
+            return "<th>" + row[cell] + "</th>";
+          }) +
+          "</tr>"
+        );
+      }
+      function insertRow(row) {
+        return (
+          "<tr>" +
+          Object.keys(row).map(function(cell) {
+            return "<td>" + row[cell] + "</td>";
+          }) +
+          "</tr>"
+        );
+      }
+      function showInfo(data) {
+        document.getElementById("prayer_times").innerHTML =
+          // "<table>" +
+          // insertHeader(data[0]) +
+          // data.slice(1).map(insertRow) +
+          // "</table>";
+          console.log({ data });
+      }
+      document.write(
+        "The published spreadsheet is located at <a target='_new' href='" +
+          public_spreadsheet_url +
+          "'>" +
+          public_spreadsheet_url +
+          "</a>"
+      );
+    </script>
+    <div id="prayer_times"></div>
+  </body>
+</html>

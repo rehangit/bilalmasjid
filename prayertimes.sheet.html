@@ -1,0 +1,144 @@
+<html>
+  <head> </head>
+  <body>
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+    <script type="text/javascript">
+      var monthNames = n =>
+        [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec"
+        ][n || new Date().getMonth()];
+
+      google.charts.load("current", { packages: ["table"] });
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.charts.setOnLoadCallback(drawGID);
+
+      function drawGID() {
+        var query = "SELECT *";
+        console.log({ query });
+        drawQueryStringAtDiv(query, "A3:N34", "table_div");
+      }
+
+      function drawQueryStringAtDiv(queryStr, range, div) {
+        var q = encodeURIComponent(queryStr);
+        var query = new google.visualization.Query(
+          `https://docs.google.com/spreadsheets/d/1rcJ6dvxcOfk4pcgDGbxLSzUxCgvjImohff76eYV2YZQ/gviz/tq?gid=891232984&headers=0&tq=${q}&range=${range}`
+        );
+        query.send(function(response) {
+          if (response.isError()) {
+            alert(
+              "Error in query: " +
+                response.getMessage() +
+                " " +
+                response.getDetailedMessage()
+            );
+            return;
+          }
+          var datatable = response.getDataTable();
+          datatable.setColumnLabel(0, monthNames());
+          datatable.setColumnLabel(1, "Islamic");
+          datatable.setColumnLabel(2, "Day");
+          datatable.setColumnLabel(3, "Fajar<br>Begins");
+          datatable.setColumnLabel(4, "Sunrise");
+          datatable.setColumnLabel(5, "Fajar<br>Jamaat");
+          datatable.setColumnLabel(6, "Zuhr<br>Begins");
+          datatable.setColumnLabel(7, "Zuhr<br>Jamaat");
+          datatable.setColumnLabel(8, "Asar<br>Begins");
+          datatable.setColumnLabel(9, "Asar<br>Jamaat");
+          datatable.setColumnLabel(10, "Maghrib");
+          datatable.setColumnLabel(12, "Isha<br>Begins");
+          datatable.setColumnLabel(13, "Isha<br>Jamaat");
+          datatable.removeColumn(11);
+          var table = new google.visualization.Table(
+            document.getElementById("table_div")
+          );
+
+          table.draw(datatable, {
+            allowHtml: true,
+            sort: "disable",
+            showRowNumber: false,
+            width: "100%",
+            height: "100%",
+            cssClassNames: {
+              headerRow: "headerRow",
+              tableCell: "tableCell",
+              selectedTableRow: "selectedTableRow"
+            }
+          });
+          table.setSelection([{ row: new Date().getDate(), col: null }]);
+        });
+      }
+    </script>
+
+    <style>
+      .headerRow {
+        font-size: medium;
+      }
+      .tableCell {
+        text-align: center;
+        pointer-events: none;
+      }
+      .table {
+        width: calc(100%-4px);
+        height: 100%;
+        display: block;
+        background: rgba(250, 200, 200, 0.5);
+        text-align: center;
+        border: 1px solid #333;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 152px;
+      }
+      .selectedTableRow {
+        background-color: gray;
+        color: whitesmoke;
+      }
+      td,
+      th {
+        font-size: medium;
+      }
+      @media only screen and (max-width: 600px) {
+        td,
+        th {
+          font-size: small;
+        }
+      }
+
+      @media only screen and (max-width: 600px) {
+        td:nth-of-type(2),
+        th:nth-of-type(2),
+        td:nth-of-type(4),
+        th:nth-of-type(4),
+        td:nth-of-type(7),
+        th:nth-of-type(7),
+        td:nth-of-type(9),
+        th:nth-of-type(9),
+        td:nth-of-type(11),
+        th:nth-of-type(11),
+        td:nth-of-type(12),
+        th:nth-of-type(12) {
+          display: none;
+        }
+      }
+    </style>
+    <div id="table_div" class="table"></div>
+  </body>
+</html>

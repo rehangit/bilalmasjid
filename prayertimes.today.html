@@ -1,0 +1,125 @@
+<html>
+  <head> </head>
+  <body>
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+    <script type="text/javascript">
+      var storageKey = `prayerTimes.${new Date().toISOString().slice(0, 16)}`;
+      var data = JSON.parse(localStorage.getItem(storageKey));
+      if (data) {
+        window.onload = () => drawData(data);
+      } else {
+        google.charts.load("current", { packages: ["table"] });
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.charts.setOnLoadCallback(drawGID);
+      }
+
+      function drawGID() {
+        var query = "SELECT * where A=" + new Date().getDate();
+        console.log({ query });
+        drawQueryStringAtDiv(query, "A1:N33");
+      }
+
+      function drawQueryStringAtDiv(queryStr, range) {
+        var q = encodeURIComponent(queryStr);
+        var query = new google.visualization.Query(
+          `https://docs.google.com/spreadsheets/d/1rcJ6dvxcOfk4pcgDGbxLSzUxCgvjImohff76eYV2YZQ/gviz/tq?gid=891232984&headers=2&tq=${q}&range=${range}`
+        );
+        query.send(function(response) {
+          if (response.isError()) {
+            alert(
+              "Error in query: " +
+                response.getMessage() +
+                " " +
+                response.getDetailedMessage()
+            );
+            return;
+          }
+          var datatable = response.getDataTable();
+          var data = JSON.parse(datatable.toJSON());
+          localStorage.setItem(storageKey, JSON.stringify(data));
+          drawData(data);
+        });
+      }
+
+      function addIshraq(json) {
+        var ss = json.sunrise.split(":");
+        var d = new Date();
+        d.setHours(ss[0]);
+        d.setMinutes(ss[1]);
+        d.setMinutes(d.getMinutes() + 15);
+        json.ishraq = `${"0" + d.getHours()}:${d.getMinutes()}`;
+      }
+
+      function drawData(data) {
+        console.log({ data });
+        var [
+          date,
+          islamicDate,
+          day,
+          fajarBegins,
+          sunrise,
+          fajarJamaat,
+          dhurBegins,
+          dhurJamaat,
+          asarBegins,
+          asarJamaat,
+          maghribBegins,
+          maghribJamaat,
+          ishaBegins,
+          ishaJamaat
+        ] = data.rows[0].c.map(val => (val.f || val.v).trim());
+        var ss = sunrise.split(":");
+        var d = new Date();
+        d.setHours(ss[0]);
+        d.setMinutes(ss[1]);
+        d.setMinutes(d.getMinutes() + 15);
+        var ishraq = `${"0" + d.getHours()}:${d.getMinutes()}`;
+        var table = `<div>${new Date().toLocaleDateString()} (${islamicDate}-${
+          data.cols[1].label
+        })</div>
+          <table class="table">
+            <thead>
+              <tr><th>Salah</th><th>Begins</th><th>Jamaat</th></tr>
+            </thead>
+            <tbody>
+            <tr><td>Fajar</td><td>${fajarBegins}</td><td>${fajarJamaat}</td></tr>
+            <tr><td>Sunrise (Ishraq)</td><td>${sunrise}</td><td>${ishraq}</td></tr>
+            <tr><td>Zuhr</td><td>${dhurBegins}</td><td>${dhurJamaat}</td></tr>
+            <tr><td>Asar</td><td>${asarBegins}</td><td>${asarJamaat}</td></tr>
+            <tr><td>Maghrib</td><td>${maghribBegins}</td><td>${maghribJamaat}</td></tr>
+            <tr><td>Isha</td><td>${ishaBegins}</td><td>${ishaJamaat}</td></tr>
+            </tbody>
+          </table>
+          `;
+        console.log(table);
+        document.getElementById("table_div").innerHTML = table;
+      }
+    </script>
+    <style>
+      thead tr {
+        font-size: 11pt;
+      }
+      th {
+        text-align: left;
+      }
+      td {
+        font-size: 11pt;
+        text-align: left;
+      }
+      table {
+        width: 100%;
+        text-align: center;
+        font-family: sans-serif;
+      }
+      body {
+        margin: 0;
+        min-height: 152px;
+      }
+    </style>
+    <div id="table_div" class="jamaat-times"></div>
+  </body>
+</html>

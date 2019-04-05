@@ -1,0 +1,60 @@
+<html>
+  <head> </head>
+  <body>
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+    <script type="text/javascript">
+      window.onload = async () => {
+        var page = await fetch(
+          "https://docs.google.com/spreadsheets/d/e/2PACX-1vSA3_a6FCJ7eCy2_A6omf9F1JQDKScTAJuBd3hqk1HBhJJT99YF6a5b9K7aZmnOut-L1zT3-OibMZW2/pub?gid=888957362&single=true&output=csv"
+        );
+        var text = await page.text();
+        var json = text
+          .split("\n")
+          .map(val => val.split(",").map(t => t.trim()))
+          .reduce((acc, [k, v]) => {
+            const split = k.split(" ");
+            const first = split[0][0].toLowerCase() + split[0].slice(1);
+            if (split.length > 1) {
+              acc._last = first;
+              acc[first + split[1]] = v;
+            } else if (acc._last) {
+              acc[acc._last + k] = v;
+            } else {
+              acc[first] = v;
+            }
+
+            return acc;
+          }, {});
+        delete json._last;
+        console.log({ json });
+        document.getElementById("table_div").innerHTML =
+          "<pre>" + json + "</pre>";
+      };
+    </script>
+    <style>
+      thead tr {
+        font-size: 11pt;
+      }
+      th {
+        text-align: left;
+      }
+      td {
+        font-size: 11pt;
+        text-align: left;
+      }
+      table {
+        width: 100%;
+        text-align: center;
+        font-family: sans-serif;
+      }
+      body {
+        margin: 0;
+        min-height: 152px;
+      }
+    </style>
+    <div id="table_div" class="jamaat-times"></div>
+  </body>
+</html>
