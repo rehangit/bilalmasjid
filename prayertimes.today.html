@@ -55,7 +55,11 @@
       }
 
       function drawData(data) {
-        console.log({ data });
+        const timeOptions = {
+          hour12: true,
+          hour: "2-digit",
+          minute: "2-digit"
+        };
         var [
           date,
           islamicDate,
@@ -71,17 +75,29 @@
           maghribJamaat,
           ishaBegins,
           ishaJamaat
-        ] = data.rows[0].c.map(val => (val.f || val.v).trim());
+        ] = data.rows[0].c
+          .map(val => (val.f || val.v).trim())
+          .map((time, i) => {
+            var [hh, mm] = time.split(":");
+            if (i > 5) {
+              hh = Number(hh) + 12;
+            }
+            const t = new Date();
+            t.setHours(hh);
+            t.setMinutes(mm);
+            return t.toLocaleTimeString("en-GB", timeOptions);
+          });
         var ss = sunrise.split(":");
         var d = new Date();
         d.setHours(ss[0]);
-        d.setMinutes(ss[1]);
+        d.setMinutes(parseInt(ss[1]));
         d.setMinutes(d.getMinutes() + 15);
-        var ishraq = `${"0" + d.getHours()}:${d.getMinutes()}`;
+        console.log(ss, d);
+        var ishraq = d.toLocaleTimeString("en-GB", timeOptions);
         var hijriOptions = {
           year: "numeric",
           month: "long",
-          day: "2-digit",
+          day: "numeric",
           weekday: "long"
         };
         var todaysDateStr = new Date().toLocaleDateString(
@@ -96,17 +112,16 @@
             </thead>
             <tbody>
             <tr><td>Fajar</td><td>${fajarBegins}</td><td>${fajarJamaat}</td></tr>
-            <tr><td>Sunrise</td><td>${sunrise}</td><td></td></tr>
+            <tr><td>Sunrise</td><td colspan=2>${sunrise} <span class="ishraq">(Ishraq ${ishraq})</span></td></tr>
             <tr><td>Zuhr</td><td>${dhurBegins}</td><td>${dhurJamaat}</td></tr>
             <tr><td>Asar</td><td>${asarBegins}</td><td>${asarJamaat}</td></tr>
             <tr><td>Maghrib</td><td>${maghribBegins}</td><td>${maghribJamaat}</td></tr>
             <tr><td>Isha</td><td>${ishaBegins}</td><td>${ishaJamaat}</td></tr>
+            <tr><td>1st Jumah</td><td colspan=2>1:30 pm</td></tr>
+            <tr><td>2nd Jumah</td><td colspan=2>2:15 pm</td></tr>
             </tbody>
           </table>
-          First Jumah: 1:30
-          Second Jumah: 2:15
           `;
-        console.log(table);
         document.getElementById("table_div").innerHTML = table;
       }
     </script>
@@ -115,15 +130,20 @@
         font-size: 12pt;
       }
       th {
-        text-align: left;
-        border: 0.25px rgba(128, 128, 128, 0.5) solid;
         background-color: gray;
         color: white;
       }
       td {
-        font-size: 12pt;
+      }
+      th,
+      td {
+        text-align: center;
+        border: 0.25px rgba(128, 128, 128, 0.5) solid;
+        padding: 2px 4px;
+      }
+      th:first-child,
+      td:first-child {
         text-align: left;
-        border: 0.25px rgba(128, 128, 128, 0.2) solid;
       }
       table {
         width: 100%;
@@ -136,8 +156,9 @@
         font-family: Lato, "Trebuchet MS", "Lucida Sans Unicode",
           "Lucida Grande", "Lucida Sans", sans-serif;
       }
-      small {
-        font-size: 0.75em;
+      .ishraq {
+        color: gray;
+        font-size: x-small;
       }
       .date {
         text-align: center;
