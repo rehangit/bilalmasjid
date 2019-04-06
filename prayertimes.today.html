@@ -78,22 +78,33 @@
         d.setMinutes(ss[1]);
         d.setMinutes(d.getMinutes() + 15);
         var ishraq = `${"0" + d.getHours()}:${d.getMinutes()}`;
-        var table = `<div>${new Date().toLocaleDateString()} (${islamicDate}-${
-          data.cols[1].label
-        })</div>
+        var hijriOptions = {
+          year: "numeric",
+          month: "long",
+          day: "2-digit",
+          weekday: "long"
+        };
+        var todaysDateStr = new Date().toLocaleDateString(
+          "en-GB-u-ca-islamic",
+          hijriOptions
+        );
+        var islamicDateStr = `${islamicDate}-${data.cols[1].label}-1440 Hj`;
+        var table = `<div class="date">${todaysDateStr}</div>
           <table class="table">
             <thead>
               <tr><th>Salah</th><th>Begins</th><th>Jamaat</th></tr>
             </thead>
             <tbody>
             <tr><td>Fajar</td><td>${fajarBegins}</td><td>${fajarJamaat}</td></tr>
-            <tr><td>Sunrise (Ishraq)</td><td>${sunrise}</td><td>${ishraq}</td></tr>
+            <tr><td>Sunrise</td><td>${sunrise}</td><td></td></tr>
             <tr><td>Zuhr</td><td>${dhurBegins}</td><td>${dhurJamaat}</td></tr>
             <tr><td>Asar</td><td>${asarBegins}</td><td>${asarJamaat}</td></tr>
             <tr><td>Maghrib</td><td>${maghribBegins}</td><td>${maghribJamaat}</td></tr>
             <tr><td>Isha</td><td>${ishaBegins}</td><td>${ishaJamaat}</td></tr>
             </tbody>
           </table>
+          First Jumah: 1:30
+          Second Jumah: 2:15
           `;
         console.log(table);
         document.getElementById("table_div").innerHTML = table;
@@ -101,23 +112,35 @@
     </script>
     <style>
       thead tr {
-        font-size: 11pt;
+        font-size: 12pt;
       }
       th {
         text-align: left;
+        border: 0.25px rgba(128, 128, 128, 0.5) solid;
+        background-color: gray;
+        color: white;
       }
       td {
-        font-size: 11pt;
+        font-size: 12pt;
         text-align: left;
+        border: 0.25px rgba(128, 128, 128, 0.2) solid;
       }
       table {
         width: 100%;
         text-align: center;
-        font-family: sans-serif;
+        border-spacing: 0;
       }
       body {
         margin: 0;
         min-height: 152px;
+        font-family: Lato, "Trebuchet MS", "Lucida Sans Unicode",
+          "Lucida Grande", "Lucida Sans", sans-serif;
+      }
+      small {
+        font-size: 0.75em;
+      }
+      .date {
+        text-align: center;
       }
     </style>
     <div id="table_div" class="jamaat-times"></div>
