@@ -6,6 +6,24 @@
       src="https://www.gstatic.com/charts/loader.js"
     ></script>
     <script type="text/javascript">
+      var islamicMonths = [
+        "Muharram",
+        "Safar",
+        "Rabiul Awal",
+        "Rabiuth Thani",
+        "Safar",
+        "Jumada Oula",
+        "Jumada Ukhra",
+        "Rajab",
+        "Sha'ban",
+        "Ramadan",
+        "Shaoual",
+        "Zul Qa'da",
+        "Zul Hijja"
+      ];
+      var nextIslamicMonth = name =>
+        islamicMonths[(islamicMonths.indexOf(name) + 1) % 12];
+
       var monthNames = n =>
         [
           "Jan",
@@ -30,13 +48,13 @@
       function drawGID() {
         var query = "SELECT *";
         console.log({ query });
-        drawQueryStringAtDiv(query, "A3:N34", "table_div");
+        drawQueryStringAtDiv(query, "A1:N34", "table_div");
       }
 
       function drawQueryStringAtDiv(queryStr, range, div) {
         var q = encodeURIComponent(queryStr);
         var query = new google.visualization.Query(
-          `https://docs.google.com/spreadsheets/d/1rcJ6dvxcOfk4pcgDGbxLSzUxCgvjImohff76eYV2YZQ/gviz/tq?gid=891232984&headers=0&tq=${q}&range=${range}`
+          `https://docs.google.com/spreadsheets/d/1rcJ6dvxcOfk4pcgDGbxLSzUxCgvjImohff76eYV2YZQ/gviz/tq?gid=891232984&headers=2&tq=${q}&range=${range}`
         );
         query.send(function(response) {
           if (response.isError()) {
@@ -49,8 +67,18 @@
             return;
           }
           var datatable = response.getDataTable();
-          datatable.setColumnLabel(0, monthNames());
-          datatable.setColumnLabel(1, "Islamic");
+          var islamicMonthChanges =
+            datatable.getValue(0, 1) >
+            datatable.getValue(datatable.getNumberOfRows() - 1, 1);
+          // datatable.setColumnLabel(0, monthNames());
+          var islamicMonth = datatable.getColumnLabel(1).trim();
+          datatable.setColumnLabel(
+            1,
+            islamicMonth +
+              (islamicMonthChanges
+                ? "/<br>" + nextIslamicMonth(islamicMonth)
+                : "")
+          );
           datatable.setColumnLabel(2, "Day");
           datatable.setColumnLabel(3, "Fajar<br>Begins");
           datatable.setColumnLabel(4, "Sunrise");
@@ -79,7 +107,7 @@
               selectedTableRow: "selectedTableRow"
             }
           });
-          table.setSelection([{ row: new Date().getDate(), col: null }]);
+          table.setSelection([{ row: new Date().getDate() - 1, col: null }]);
         });
       }
     </script>
@@ -122,7 +150,7 @@
         }
       }
 
-      @media only screen and (max-width: 600px) {
+      /* @media only screen and (max-width: 600px) {
         td:nth-of-type(2),
         th:nth-of-type(2),
         td:nth-of-type(4),
@@ -137,7 +165,7 @@
         th:nth-of-type(12) {
           display: none;
         }
-      }
+      } */
     </style>
     <div id="table_div" class="table"></div>
   </body>
