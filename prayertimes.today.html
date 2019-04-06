@@ -6,27 +6,12 @@
       src="https://www.gstatic.com/charts/loader.js"
     ></script>
     <script type="text/javascript">
-      var storageKey = `prayerTimes.${new Date().toISOString().slice(0, 16)}`;
-      var data = JSON.parse(localStorage.getItem(storageKey));
-      if (data) {
-        window.onload = () => drawData(data);
-      } else {
-        google.charts.load("current", { packages: ["table"] });
-
-        // Set a callback to run when the Google Visualization API is loaded.
-        google.charts.setOnLoadCallback(drawGID);
-      }
-
-      function drawGID() {
-        var query = "SELECT * where A=" + new Date().getDate();
-        console.log({ query });
-        drawQueryStringAtDiv(query, "A1:N33");
-      }
-
-      function drawQueryStringAtDiv(queryStr, range) {
+      google.charts.load("current", { packages: ["table"] });
+      google.charts.setOnLoadCallback(function drawGID() {
+        var queryStr = "SELECT * where A=" + new Date().getDate();
         var q = encodeURIComponent(queryStr);
         var query = new google.visualization.Query(
-          `https://docs.google.com/spreadsheets/d/1rcJ6dvxcOfk4pcgDGbxLSzUxCgvjImohff76eYV2YZQ/gviz/tq?gid=891232984&headers=2&tq=${q}&range=${range}`
+          `https://docs.google.com/spreadsheets/d/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/edit?gid=77472145&headers=1&range=A1:O32&tq=${q}`
         );
         query.send(function(response) {
           if (response.isError()) {
@@ -40,26 +25,25 @@
           }
           var datatable = response.getDataTable();
           var data = JSON.parse(datatable.toJSON());
-          localStorage.setItem(storageKey, JSON.stringify(data));
           drawData(data);
         });
-      }
+      });
 
-      function addIshraq(json) {
-        var ss = json.sunrise.split(":");
-        var d = new Date();
-        d.setHours(ss[0]);
-        d.setMinutes(ss[1]);
-        d.setMinutes(d.getMinutes() + 15);
-        json.ishraq = `${"0" + d.getHours()}:${d.getMinutes()}`;
+      const timeOptions = {
+        hour12: false,
+        hour: "numeric",
+        minute: "2-digit"
+      };
+
+      function formatTime(time, incH = 0, incM = 0) {
+        var split = time.split(/[\:\s]/);
+        var t = new Date();
+        t.setHours(Number(split[0]) + incH);
+        t.setMinutes(Number(split[1]) + incM);
+        return t.toLocaleTimeString("en-GB", timeOptions);
       }
 
       function drawData(data) {
-        const timeOptions = {
-          hour12: true,
-          hour: "2-digit",
-          minute: "2-digit"
-        };
         var [
           date,
           islamicDate,
@@ -74,38 +58,26 @@
           maghribBegins,
           maghribJamaat,
           ishaBegins,
-          ishaJamaat
-        ] = data.rows[0].c
-          .map(val => (val.f || val.v).trim())
-          .map((time, i) => {
-            var [hh, mm] = time.split(":");
-            if (i > 5) {
-              hh = Number(hh) + 12;
-            }
+          ishaJamaat,
+          islamicMonth
+        ] = data.rows[0].c.map((val, i) => {
+          val = (val.f || val.v).trim();
+          var [hh, mm] = val.split(":");
+          if (mm) {
             const t = new Date();
-            t.setHours(hh);
+            const h = Number(hh);
+            t.setHours(i > 5 && h < 12 ? h + 12 : hh);
             t.setMinutes(mm);
-            return t.toLocaleTimeString("en-GB", timeOptions);
-          });
-        var ss = sunrise.split(":");
-        var d = new Date();
-        d.setHours(ss[0]);
-        d.setMinutes(parseInt(ss[1]));
-        d.setMinutes(d.getMinutes() + 15);
-        console.log(ss, d);
-        var ishraq = d.toLocaleTimeString("en-GB", timeOptions);
-        var hijriOptions = {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          weekday: "long"
-        };
-        var todaysDateStr = new Date().toLocaleDateString(
-          "en-GB-u-ca-islamic",
-          hijriOptions
-        );
-        var islamicDateStr = `${islamicDate}-${data.cols[1].label}-1440 Hj`;
-        var table = `<div class="date">${todaysDateStr}</div>
+            val = t.toLocaleTimeString("en-GB", timeOptions);
+          }
+          return val;
+        });
+        var ishraq = formatTime(sunrise, 0, 15);
+        var todaysDateStr = `${date} ${data.cols[0].label.trim()} 2019`;
+        var islamicDateStr = `${islamicDate} ${islamicMonth} 1440 Hj`;
+        var table = `
+          <div class="date english">${todaysDateStr}</div>
+          <div class="date islamic">${islamicDateStr}</div>
           <table class="table">
             <thead>
               <tr><th>Salah</th><th>Begins</th><th>Jamaat</th></tr>
@@ -117,8 +89,8 @@
             <tr><td>Asar</td><td>${asarBegins}</td><td>${asarJamaat}</td></tr>
             <tr><td>Maghrib</td><td>${maghribBegins}</td><td>${maghribJamaat}</td></tr>
             <tr><td>Isha</td><td>${ishaBegins}</td><td>${ishaJamaat}</td></tr>
-            <tr><td>1st Jumah</td><td colspan=2>1:30 pm</td></tr>
-            <tr><td>2nd Jumah</td><td colspan=2>2:15 pm</td></tr>
+            <tr><td>1st Jumah</td><td colspan=2>${formatTime("13:30")}</td></tr>
+            <tr><td>2nd Jumah</td><td colspan=2>${formatTime("14:15")}</td></tr>
             </tbody>
           </table>
           `;
@@ -126,20 +98,16 @@
       }
     </script>
     <style>
-      thead tr {
-        font-size: 12pt;
-      }
       th {
         background-color: gray;
         color: white;
-      }
-      td {
       }
       th,
       td {
         text-align: center;
         border: 0.25px rgba(128, 128, 128, 0.5) solid;
         padding: 2px 4px;
+        font-size: inherit;
       }
       th:first-child,
       td:first-child {
@@ -147,14 +115,17 @@
       }
       table {
         width: 100%;
+        max-height: 80%;
         text-align: center;
         border-spacing: 0;
+        font-size: inherit;
+        border-collapse: collapse;
       }
       body {
         margin: 0;
-        min-height: 152px;
         font-family: Lato, "Trebuchet MS", "Lucida Sans Unicode",
           "Lucida Grande", "Lucida Sans", sans-serif;
+        font-size: 16pt;
       }
       .ishraq {
         color: gray;
@@ -163,7 +134,22 @@
       .date {
         text-align: center;
       }
+      .date.english {
+        font-size: x-small;
+      }
+      .date.islamic {
+        font-weight: bold;
+      }
+      .today {
+        height: 100%;
+        width: 100%;
+      }
+      @media only screen and (max-width: 990px) {
+        body {
+          font-size: 14pt;
+        }
+      }
     </style>
-    <div id="table_div" class="jamaat-times"></div>
+    <div id="table_div" class="today"></div>
   </body>
 </html>
