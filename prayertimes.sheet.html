@@ -6,55 +6,11 @@
       src="https://www.gstatic.com/charts/loader.js"
     ></script>
     <script type="text/javascript">
-      var islamicMonths = [
-        "Muharram",
-        "Safar",
-        "Rabiul Awal",
-        "Rabiuth Thani",
-        "Safar",
-        "Jumada Oula",
-        "Jumada Ukhra",
-        "Rajab",
-        "Sha'ban",
-        "Ramadan",
-        "Shaoual",
-        "Zul Qa'da",
-        "Zul Hijja"
-      ];
-      var nextIslamicMonth = name =>
-        islamicMonths[(islamicMonths.indexOf(name) + 1) % 12];
-
-      var monthNames = n =>
-        [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec"
-        ][n || new Date().getMonth()];
-
       google.charts.load("current", { packages: ["table"] });
-
-      // Set a callback to run when the Google Visualization API is loaded.
-      google.charts.setOnLoadCallback(drawGID);
-
-      function drawGID() {
-        var query = "SELECT *";
-        console.log({ query });
-        drawQueryStringAtDiv(query, "A1:N34", "table_div");
-      }
-
-      function drawQueryStringAtDiv(queryStr, range, div) {
-        var q = encodeURIComponent(queryStr);
+      google.charts.setOnLoadCallback(function drawGID() {
+        var q = encodeURIComponent("SELECT *");
         var query = new google.visualization.Query(
-          `https://docs.google.com/spreadsheets/d/1rcJ6dvxcOfk4pcgDGbxLSzUxCgvjImohff76eYV2YZQ/gviz/tq?gid=891232984&headers=2&tq=${q}&range=${range}`
+          `https://docs.google.com/spreadsheets/d/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/gviz/tq?gid=891232984&headers=1&tq=${q}&range=A1:N34`
         );
         query.send(function(response) {
           if (response.isError()) {
@@ -67,30 +23,11 @@
             return;
           }
           var datatable = response.getDataTable();
-          var islamicMonthChanges =
-            datatable.getValue(0, 1) >
-            datatable.getValue(datatable.getNumberOfRows() - 1, 1);
-          // datatable.setColumnLabel(0, monthNames());
-          var islamicMonth = datatable.getColumnLabel(1).trim();
-          datatable.setColumnLabel(
-            1,
-            islamicMonth +
-              (islamicMonthChanges
-                ? "/<br>" + nextIslamicMonth(islamicMonth)
-                : "")
-          );
-          datatable.setColumnLabel(2, "Day");
-          datatable.setColumnLabel(3, "Fajar<br>Begins");
-          datatable.setColumnLabel(4, "Sunrise");
-          datatable.setColumnLabel(5, "Fajar<br>Jamaat");
-          datatable.setColumnLabel(6, "Zuhr<br>Begins");
-          datatable.setColumnLabel(7, "Zuhr<br>Jamaat");
-          datatable.setColumnLabel(8, "Asar<br>Begins");
-          datatable.setColumnLabel(9, "Asar<br>Jamaat");
-          datatable.setColumnLabel(10, "Maghrib");
-          datatable.setColumnLabel(12, "Isha<br>Begins");
-          datatable.setColumnLabel(13, "Isha<br>Jamaat");
           datatable.removeColumn(11);
+          for (var i = 1; i < datatable.getNumberOfColumns(); i++) {
+            const label = datatable.getColumnLabel(i);
+            datatable.setColumnLabel(i, label.split(" ").join("<br>"));
+          }
           var table = new google.visualization.Table(
             document.getElementById("table_div")
           );
@@ -109,7 +46,7 @@
           });
           table.setSelection([{ row: new Date().getDate() - 1, col: null }]);
         });
-      }
+      });
     </script>
 
     <style>
