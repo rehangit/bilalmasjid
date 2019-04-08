@@ -1,7 +1,5 @@
 <html>
-  <head>
-    <link rel="stylesheet" href="./style.sheet.css" />
-  </head>
+  <head> </head>
   <body>
     <script type="text/javascript">
       window.onload = async () => {
@@ -59,6 +57,74 @@
         `;
       };
     </script>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Lato, "Trebuchet MS", "Lucida Sans Unicode",
+          "Lucida Grande", "Lucida Sans", sans-serif;
+      }
+
+      .table {
+        width: calc(100%-4px);
+        text-align: center;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        border-collapse: collapse;
+        margin: auto;
+      }
+      .selectedTableRow {
+        background-color: slategray;
+        color: whitesmoke;
+      }
+      td,
+      th {
+        text-align: center;
+        border: 0.25px rgba(128, 128, 128, 0.5) solid;
+        padding: 4px 4px;
+        font-size: inherit;
+      }
+      th:first-child,
+      td:first-child {
+        text-align: left;
+      }
+
+      .table thead.small {
+        display: none;
+      }
+
+      .table thead.full {
+        display: table-header-group;
+      }
+
+      @media only screen and (max-width: 600px) {
+        td,
+        th {
+          font-size: small;
+          padding: 2px 2px;
+        }
+
+        .table thead.small {
+          display: table-header-group;
+        }
+
+        .table thead.full {
+          display: none;
+        }
+      }
+
+      .table thead th {
+        background-color: darkolivegreen;
+        color: white;
+      }
+      .table thead,
+      .table thead th {
+        position: sticky;
+        position: -webkit-sticky;
+        top: 0;
+      }
+    </style>
 
     <div id="prayer_times"></div>
   </body>
