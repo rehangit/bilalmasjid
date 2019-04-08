@@ -1,32 +1,26 @@
 <html>
   <head> </head>
   <body>
-    <script
-      type="text/javascript"
-      src="https://www.gstatic.com/charts/loader.js"
-    ></script>
     <script type="text/javascript">
-      google.charts.load("current", { packages: ["table"] });
-      google.charts.setOnLoadCallback(function drawGID() {
-        var queryStr = "SELECT * where A=" + new Date().getDate();
-        var q = encodeURIComponent(queryStr);
-        var query = new google.visualization.Query(
-          `https://docs.google.com/spreadsheets/d/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/edit?gid=77472145&headers=1&range=A1:O32&tq=${q}`
-        );
-        query.send(function(response) {
-          if (response.isError()) {
-            alert(
-              "Error in query: " +
-                response.getMessage() +
-                " " +
-                response.getDetailedMessage()
-            );
-            return;
-          }
-          var datatable = response.getDataTable();
-          var data = JSON.parse(datatable.toJSON());
-          drawData(data);
-        });
+      const index = new Date().getDate();
+      Promise.all([
+        fetch(
+          "https://spreadsheets.google.com/feeds/list/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/o1a4hmz/public/values?alt=json&max-results=1&start-index=" +
+            index
+        )
+          .then(r => r.json())
+          .then(json => {
+            const data = json.feed.entry.map(e => [
+              e.title.$t,
+              ...e.content.$t.split(", ").map(i => i.split(": ")[1].trim())
+            ]);
+            return drawData(data);
+          }),
+        new Promise(resolve => {
+          window.onload = () => resolve();
+        })
+      ]).then(([table]) => {
+        document.getElementById("table_div").innerHTML = table;
       });
 
       const timeOptions = {
@@ -60,8 +54,7 @@
           ishaBegins,
           ishaJamaat,
           islamicMonth
-        ] = data.rows[0].c.map((val, i) => {
-          val = (val.f || val.v).trim();
+        ] = data[0].map((val, i) => {
           var [hh, mm] = val.split(":");
           if (mm) {
             const t = new Date();
@@ -73,7 +66,10 @@
           return val;
         });
         var ishraq = formatTime(sunrise, 0, 15);
-        var todaysDateStr = `${date} ${data.cols[0].label.trim()} 2019`;
+        var todaysDateStr = `${date} ${new Date().toLocaleDateString("en-GB", {
+          year: "numeric",
+          month: "long"
+        })}`;
         var islamicDateStr = `${islamicDate} ${islamicMonth} 1440 Hj`;
         var table = `
           <div class="date english">${todaysDateStr}</div>
@@ -94,7 +90,7 @@
             </tbody>
           </table>
           `;
-        document.getElementById("table_div").innerHTML = table;
+        return table;
       }
     </script>
     <style>
