@@ -1,5 +1,7 @@
 <html>
-  <head> </head>
+  <head>
+    <link rel="stylesheet" href="./style.sheet.css" />
+  </head>
   <body>
     <script
       type="text/javascript"
@@ -7,49 +9,46 @@
     ></script>
     <script type="text/javascript">
       var public_spreadsheet_url =
-        "https://docs.google.com/spreadsheets/d/1rcJ6dvxcOfk4pcgDGbxLSzUxCgvjImohff76eYV2YZQ/edit?usp=sharing";
+        "https://docs.google.com/spreadsheets/d/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/view#gid=77472145";
       function init() {
         Tabletop.init({
           key: public_spreadsheet_url,
           callback: showInfo,
-          simpleSheet: true
+          wanted: ["formatted"]
         });
       }
       window.addEventListener("DOMContentLoaded", init);
 
-      function insertHeader(row) {
-        return (
-          "<tr>" +
-          Object.keys(row).map(function(cell) {
-            return "<th>" + row[cell] + "</th>";
-          }) +
-          "</tr>"
-        );
+      function insertCell(value, td = "td") {
+        return `<${td}>${value}</${td}>`;
       }
-      function insertRow(row) {
-        return (
-          "<tr>" +
-          Object.keys(row).map(function(cell) {
-            return "<td>" + row[cell] + "</td>";
-          }) +
-          "</tr>"
-        );
+
+      function insertRow(row, className = "", td) {
+        return `<tr class='${className}'>${Object.keys(row)
+          .map(i => insertCell(row[i], td))
+          .join("")}</tr>`;
       }
-      function showInfo(data) {
-        document.getElementById("prayer_times").innerHTML =
-          // "<table>" +
-          // insertHeader(data[0]) +
-          // data.slice(1).map(insertRow) +
-          // "</table>";
-          console.log({ data });
+
+      function showInfo({
+        formatted: { columnNames: headers, elements: rows }
+      }) {
+        headers.pop();
+        const selectedIndex = new Date().getDate() - 1;
+        console.log(headers, rows, selectedIndex);
+        document.getElementById("prayer_times").innerHTML = `
+          <table class='table'>
+            <thead>${insertRow(headers, "headerRow", "th")}</thead>
+            <tbody>${rows
+              .map((row, i) =>
+                insertRow(
+                  headers.map(c => row[c]),
+                  i === selectedIndex ? "selectedTableRow" : ""
+                )
+              )
+              .join("")}</tbody>
+          </table>
+        `;
       }
-      document.write(
-        "The published spreadsheet is located at <a target='_new' href='" +
-          public_spreadsheet_url +
-          "'>" +
-          public_spreadsheet_url +
-          "</a>"
-      );
     </script>
     <div id="prayer_times"></div>
   </body>

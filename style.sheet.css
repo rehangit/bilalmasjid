@@ -1,0 +1,47 @@
+.headerRow {
+  font-size: medium;
+}
+.tableCell {
+  text-align: center;
+  pointer-events: none;
+}
+body {
+  margin: 0;
+  font-family: Lato, "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", sans-serif;
+  font-size: 16pt;
+}
+
+table {
+  width: calc(100%-4px);
+  height: 100%;
+  display: block;
+  text-align: center;
+  border: 1px solid #333;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border-collapse: collapse;
+}
+.selectedTableRow {
+  background-color: gray;
+  color: whitesmoke;
+}
+td,
+th {
+  text-align: center;
+  border: 0.25px rgba(128, 128, 128, 0.5) solid;
+  padding: 2px 4px;
+  font-size: inherit;
+}
+th:first-child,
+td:first-child {
+  text-align: left;
+}
+
+@media only screen and (max-width: 600px) {
+  td,
+  th {
+    font-size: small;
+  }
+}
