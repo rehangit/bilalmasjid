@@ -23,20 +23,33 @@
             )
         ]);
 
-        function insertCell(value, td = "td") {
-          return `<${td}>${value}</${td}>`;
+        function insertCell(value, td = "td", i) {
+          if (i !== 11 && i !== 14) {
+            const [hh, mm] = value.split(":");
+            if (i > 5 && mm) {
+              const h = Number(hh);
+              if (h < 12) value = h + 12 + ":" + mm;
+            }
+            return `<${td}>${value}</${td}>`;
+          }
+          return "";
         }
 
         function insertRow(row, className = "", td) {
           return `<tr class='${className}'>${row
-            .map((c, i) => (i !== 11 && i !== 14 ? insertCell(c, td) : ""))
+            .map((c, i) => insertCell(c, td, i))
             .join("")}</tr>`;
         }
 
         const today = new Date().getDate();
         document.getElementById("prayer_times").innerHTML = `
           <table class='table'>
-            <thead>${insertRow(headers, "headerRow", "th")}</thead>
+            <thead class="full">${insertRow(headers, "headerRow", "th")}</thead>
+            <thead class="small">${insertRow(
+              headers.map(w => w.replace(/\B[aeiou]/gi, "")),
+              "headerRow",
+              "th"
+            )}</thead>
             <tbody>${rows
               .map(row =>
                 insertRow(row, row[0] == today ? "selectedTableRow" : "")

@@ -1,38 +1,27 @@
-.headerRow {
-  background-color: green;
-  color: white;
-}
-.tableCell {
-  text-align: center;
-  pointer-events: none;
-}
 body {
   margin: 0;
   font-family: Lato, "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
     "Lucida Sans", sans-serif;
-  font-size: 18pt;
 }
 
-table {
-  width: 100%;
-  height: 100%;
-  display: block;
+.table {
+  width: calc(100%-4px);
   text-align: center;
-  border: 1px solid #333;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   border-collapse: collapse;
+  margin: auto;
 }
 .selectedTableRow {
-  background-color: darkorange;
+  background-color: slategray;
   color: whitesmoke;
 }
 td,
 th {
   text-align: center;
   border: 0.25px rgba(128, 128, 128, 0.5) solid;
-  padding: 2px 4px;
+  padding: 4px 4px;
   font-size: inherit;
 }
 th:first-child,
@@ -40,9 +29,37 @@ td:first-child {
   text-align: left;
 }
 
+.table thead.small {
+  display: none;
+}
+
+.table thead.full {
+  display: table-header-group;
+}
+
 @media only screen and (max-width: 600px) {
   td,
   th {
     font-size: small;
+    padding: 2px 2px;
   }
+
+  .table thead.small {
+    display: table-header-group;
+  }
+
+  .table thead.full {
+    display: none;
+  }
+}
+
+.table thead th {
+  background-color: darkolivegreen;
+  color: white;
+}
+.table thead,
+.table thead th {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 0;
 }
