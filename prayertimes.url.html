@@ -42,12 +42,7 @@
         const today = new Date().getDate();
         document.getElementById("prayer_times").innerHTML = `
           <table class='table'>
-            <thead class="full">${insertRow(headers, "headerRow", "th")}</thead>
-            <thead class="small">${insertRow(
-              headers.map(w => w.replace(/\B[aeiou]/gi, "")),
-              "headerRow",
-              "th"
-            )}</thead>
+            <thead>${insertRow(headers, "headerRow", "th")}</thead>
             <tbody>${rows
               .map(row =>
                 insertRow(row, row[0] == today ? "selectedTableRow" : "")
@@ -90,27 +85,11 @@
         text-align: left;
       }
 
-      .table thead.small {
-        display: none;
-      }
-
-      .table thead.full {
-        display: table-header-group;
-      }
-
       @media only screen and (max-width: 600px) {
         td,
         th {
           font-size: small;
           padding: 2px 2px;
-        }
-
-        .table thead.small {
-          display: table-header-group;
-        }
-
-        .table thead.full {
-          display: none;
         }
       }
 
