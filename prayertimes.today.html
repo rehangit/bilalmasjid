@@ -1,5 +1,69 @@
 <html>
-  <head> </head>
+  <head>
+    <style>
+      th {
+        background-color: gray;
+        color: white;
+      }
+      th,
+      td {
+        text-align: center;
+        border: 0.25px rgba(128, 128, 128, 0.5) solid;
+        padding: 2px 4px;
+        font-size: inherit;
+      }
+      th:first-child,
+      td:first-child {
+        text-align: left;
+      }
+      table {
+        width: 100%;
+        max-height: 80%;
+        text-align: center;
+        border-spacing: 0;
+        font-size: inherit;
+        border-collapse: collapse;
+      }
+      body {
+        margin: 0;
+        font-family: Lato, "Trebuchet MS", "Lucida Sans Unicode",
+          "Lucida Grande", "Lucida Sans", sans-serif;
+        font-size: 10pt;
+      }
+      .ishraq {
+        color: gray;
+        font-size: x-small;
+      }
+      .date {
+        text-align: center;
+      }
+      .date.english {
+        font-size: x-small;
+      }
+      .date.islamic {
+        font-weight: bold;
+      }
+      .today {
+        height: 100%;
+        width: 100%;
+      }
+      @media only screen and (min-width: 240px) {
+        body {
+          font-size: 12pt;
+        }
+      }
+      @media only screen and (min-width: 300px) {
+        body {
+          font-size: 14pt;
+        }
+      }
+      @media only screen and (min-width: 360px) {
+        body {
+          font-size: 16pt;
+        }
+      }
+    </style>
+  </head>
   <body>
     <script type="text/javascript">
       const index = new Date().getDate();
@@ -93,59 +157,6 @@
         return table;
       }
     </script>
-    <style>
-      th {
-        background-color: gray;
-        color: white;
-      }
-      th,
-      td {
-        text-align: center;
-        border: 0.25px rgba(128, 128, 128, 0.5) solid;
-        padding: 2px 4px;
-        font-size: inherit;
-      }
-      th:first-child,
-      td:first-child {
-        text-align: left;
-      }
-      table {
-        width: 100%;
-        max-height: 80%;
-        text-align: center;
-        border-spacing: 0;
-        font-size: inherit;
-        border-collapse: collapse;
-      }
-      body {
-        margin: 0;
-        font-family: Lato, "Trebuchet MS", "Lucida Sans Unicode",
-          "Lucida Grande", "Lucida Sans", sans-serif;
-        font-size: 16pt;
-      }
-      .ishraq {
-        color: gray;
-        font-size: x-small;
-      }
-      .date {
-        text-align: center;
-      }
-      .date.english {
-        font-size: x-small;
-      }
-      .date.islamic {
-        font-weight: bold;
-      }
-      .today {
-        height: 100%;
-        width: 100%;
-      }
-      @media only screen and (max-width: 990px) {
-        body {
-          font-size: 14pt;
-        }
-      }
-    </style>
     <div id="table_div" class="today"></div>
   </body>
 </html>
