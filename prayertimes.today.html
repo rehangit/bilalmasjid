@@ -62,6 +62,9 @@
           font-size: 16pt;
         }
       }
+      .highlight {
+        background-color: greenyellow;
+      }
     </style>
   </head>
   <body>
@@ -135,6 +138,28 @@
           month: "long"
         })}`;
         var islamicDateStr = `${islamicDate} ${islamicMonth} 1440 Hj`;
+        var timeToMins = t => {
+          const [h, m] = t.split(":").map(Number);
+          return h * 60 + m;
+        };
+        var nowInRange = (f, t, onset = 0, offset = 0) => {
+          var n = new Date()
+            .toLocaleTimeString("en-GB", { hour12: false })
+            .slice(0, 5);
+          var from = timeToMins(f) - onset;
+          var to = timeToMins(t) + offset;
+          var now = timeToMins(n);
+          return from <= now && now < to;
+        };
+
+        // highlight which jamaat time it is now
+        var [hlFajar, hlDhuhur, hlAsar, hlMaghrib, hlIsha] = [
+          nowInRange(fajarBegins, sunrise),
+          nowInRange(dhurBegins, dhurJamaat, 0, 10),
+          nowInRange(asarBegins, asarJamaat, 0, 10),
+          nowInRange(maghribBegins, maghribBegins, 10, 10),
+          nowInRange(ishaBegins, ishaJamaat, 0, 10)
+        ].map(value => (value ? "class='highlight'" : ""));
         var table = `
           <div class="date english">${todaysDateStr}</div>
           <div class="date islamic">${islamicDateStr}</div>
@@ -143,14 +168,39 @@
               <tr><th>Salah</th><th>Begins</th><th>Jamaat</th></tr>
             </thead>
             <tbody>
-            <tr><td>Fajar</td><td>${fajarBegins}</td><td>${fajarJamaat}</td></tr>
-            <tr><td>Sunrise</td><td colspan=2>${sunrise} <span class="ishraq">(Ishraq ${ishraq})</span></td></tr>
-            <tr><td>Zuhr</td><td>${dhurBegins}</td><td>${dhurJamaat}</td></tr>
-            <tr><td>Asar</td><td>${asarBegins}</td><td>${asarJamaat}</td></tr>
-            <tr><td>Maghrib</td><td colspan=2>${maghribBegins}</td></tr>
-            <tr><td>Isha</td><td>${ishaBegins}</td><td>${ishaJamaat}</td></tr>
-            <tr><td>1st Jumah</td><td colspan=2>${formatTime("13:30")}</td></tr>
-            <tr><td>2nd Jumah</td><td colspan=2>${formatTime("14:15")}</td></tr>
+              <tr>
+                <td>Fajar</td>
+                <td>${fajarBegins}</td>
+                <td ${hlFajar}>${fajarJamaat}</td>
+              </tr>
+              <tr>
+                <td>Sunrise</td>
+                <td colspan=2>${sunrise} <span class="ishraq">(Ishraq ${ishraq})</span></td>
+              </tr>
+              <tr>
+                <td>Zuhr</td>
+                <td>${dhurBegins}</td>
+                <td ${hlDhuhur}>${dhurJamaat}</td>
+              </tr>
+              <tr>
+                <td>Asar</td>
+                <td>${asarBegins}</td>
+                <td ${hlAsar}>${asarJamaat}</td>
+              </tr>
+              <tr>
+                <td>Maghrib</td>
+                <td colspan=2 ${hlMaghrib}>${maghribBegins}</td>
+              </tr>
+              <tr>
+                <td>Isha</td>
+                <td>${ishaBegins}</td>
+                <td ${hlIsha}>${ishaJamaat}</td></tr>
+              <tr>
+                <td>1st Jumah</td><td colspan=2>13:30</td>
+              </tr>
+              <tr>
+                <td>2nd Jumah</td><td colspan=2>14:15</td>
+              </tr>
             </tbody>
           </table>
           `;
