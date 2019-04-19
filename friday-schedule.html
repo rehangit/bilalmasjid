@@ -1,0 +1,20 @@
+<html>
+  <head> </head>
+  <body>
+    <script>
+      window.onload = async function() {
+        var htmldoc = await fetch(
+          "https://docs.google.com/document/d/1RC1Ly6u3VAwsJ2CHAr24EJwnLJh8ICoZFWWOHu6xUqw/export?format=html",
+          {
+            mode: "no-cors"
+          }
+        ).then(res => res.text());
+        console.log(htmldoc);
+        document.getElementById("doc").innerHTML = htmldoc;
+      };
+    </script>
+    <div id="doc"></div>
+  </body>
+  <html></html>
+</html>
+
