@@ -30,8 +30,9 @@
           "Lucida Grande", "Lucida Sans", sans-serif;
         font-size: 10pt;
       }
-      .ishraq {
-        color: gray;
+      .ishraq::after {
+        content: "ishraq: " attr(data-text);
+        position: absolute;
         font-size: x-small;
       }
       .date {
@@ -63,7 +64,14 @@
         }
       }
       .highlight {
-        background-color: greenyellow;
+        background-color: yellow;
+      }
+      .changing:after {
+        content: "changing tomorrow";
+        position: absolute;
+        font-size: xx-small;
+        color: red;
+        text-align: left;
       }
     </style>
   </head>
@@ -72,7 +80,7 @@
       const index = new Date().getDate();
       Promise.all([
         fetch(
-          "https://spreadsheets.google.com/feeds/list/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/o1a4hmz/public/values?alt=json&max-results=1&start-index=" +
+          "https://spreadsheets.google.com/feeds/list/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/o1a4hmz/public/values?alt=json&max-results=2&start-index=" +
             index
         )
           .then(r => r.json())
@@ -97,14 +105,16 @@
       };
 
       function formatTime(time, incH = 0, incM = 0) {
-        var split = time.split(/[\:\s]/);
+        var split = time.replace(/[^ -~]/g, "").split(/[\:\s]/);
         var t = new Date();
         t.setHours(Number(split[0]) + incH);
         t.setMinutes(Number(split[1]) + incM);
-        return t.toLocaleTimeString("en-GB", timeOptions);
+        return t
+          .toLocaleTimeString("en-GB", timeOptions)
+          .replace(/[^ -~]/g, "");
       }
 
-      function drawData(data) {
+      var getRowData = row => {
         var [
           date,
           islamicDate,
@@ -121,7 +131,7 @@
           ishaBegins,
           ishaJamaat,
           islamicMonth
-        ] = data[0].map((val, i) => {
+        ] = row.map((val, i) => {
           var [hh, mm] = val.split(":");
           if (mm) {
             const t = new Date();
@@ -132,34 +142,80 @@
           }
           return val;
         });
-        var ishraq = formatTime(sunrise, 0, 15);
-        var todaysDateStr = `${date} ${new Date().toLocaleDateString("en-GB", {
-          year: "numeric",
-          month: "long"
-        })}`;
-        var islamicDateStr = `${islamicDate} ${islamicMonth} 1440 Hj`;
+        return {
+          date,
+          islamicDate,
+          day,
+          fajarBegins,
+          sunrise,
+          fajarJamaat,
+          dhurBegins,
+          dhurJamaat,
+          asarBegins,
+          asarJamaat,
+          maghribBegins,
+          maghribJamaat,
+          ishaBegins,
+          ishaJamaat,
+          islamicMonth
+        };
+      };
+
+      function drawData(data) {
+        var today = getRowData(data[0]);
+        var tomorrow = getRowData(data[1]);
+        var ishraq = formatTime(today.sunrise, 0, 15);
+        var todaysDateStr = `${today.date} ${new Date().toLocaleDateString(
+          "en-GB",
+          {
+            year: "numeric",
+            month: "long"
+          }
+        )}`;
+        var islamicDateStr = `${today.islamicDate} ${
+          today.islamicMonth
+        } 1440 Hj`;
         var timeToMins = t => {
-          const [h, m] = t.split(":").map(Number);
+          const [h, m] = t
+            .replace(/[^ -~]/g, "")
+            .split(":")
+            .map(Number);
           return h * 60 + m;
         };
-        var nowInRange = (f, t, onset = 0, offset = 0) => {
-          var n = new Date()
-            .toLocaleTimeString("en-GB", { hour12: false })
-            .slice(0, 5);
-          var from = timeToMins(f) - onset;
-          var to = timeToMins(t) + offset;
-          var now = timeToMins(n);
-          return from <= now && now < to;
+
+        var calcStyles = (begins, jamaat, before = 0, after = 0, next) => {
+          const style = [];
+          var now = timeToMins(
+            new Date().toLocaleTimeString("en-GB", timeOptions).slice(0, 5)
+          );
+          var from = timeToMins(begins) - before;
+          var jamaatTime = timeToMins(jamaat);
+          var to = jamaatTime + after;
+          style.push(from <= now && now < to ? "highlight" : "");
+          if (next && jamaatTime !== timeToMins(next)) style.push("changing");
+          return style.join(" ");
         };
 
         // highlight which jamaat time it is now
-        var [hlFajar, hlDhuhur, hlAsar, hlMaghrib, hlIsha] = [
-          nowInRange(fajarBegins, sunrise),
-          nowInRange(dhurBegins, dhurJamaat, 0, 10),
-          nowInRange(asarBegins, asarJamaat, 0, 10),
-          nowInRange(maghribBegins, maghribBegins, 10, 10),
-          nowInRange(ishaBegins, ishaJamaat, 0, 10)
-        ].map(value => (value ? "class='highlight'" : ""));
+        var [fajarClass, dhuhurClass, asarClass, maghribClass, ishaClass] = [
+          calcStyles(today.fajarBegins, today.sunrise),
+          calcStyles(today.dhurBegins, today.dhurJamaat, 0, 10),
+          calcStyles(
+            today.asarBegins,
+            today.asarJamaat,
+            0,
+            10,
+            tomorrow.asarJamaat
+          ),
+          calcStyles(today.maghribBegins, today.maghribBegins, 10, 10),
+          calcStyles(
+            today.ishaBegins,
+            today.ishaJamaat,
+            0,
+            10,
+            tomorrow.ishaJamaat
+          )
+        ];
         var table = `
           <div class="date english">${todaysDateStr}</div>
           <div class="date islamic">${islamicDateStr}</div>
@@ -170,31 +226,38 @@
             <tbody>
               <tr>
                 <td>Fajar</td>
-                <td>${fajarBegins}</td>
-                <td ${hlFajar}>${fajarJamaat}</td>
+                <td>${today.fajarBegins}</td>
+                <td class="${fajarClass}">${today.fajarJamaat}</td>
               </tr>
               <tr>
                 <td>Sunrise</td>
-                <td colspan=2>${sunrise} <span class="ishraq">(Ishraq ${ishraq})</span></td>
+                <td colspan=2
+                    data-text="${ishraq}"
+                    class="ishraq"
+                >
+                  ${today.sunrise}
+                </td>
               </tr>
               <tr>
                 <td>Zuhr</td>
-                <td>${dhurBegins}</td>
-                <td ${hlDhuhur}>${dhurJamaat}</td>
+                <td>${today.dhurBegins}</td>
+                <td class="${dhuhurClass}">${today.dhurJamaat}</td>
               </tr>
               <tr>
                 <td>Asar</td>
-                <td>${asarBegins}</td>
-                <td ${hlAsar}>${asarJamaat}</td>
+                <td>${today.asarBegins}</td>
+                <td class="${asarClass}">${today.asarJamaat}</td>
               </tr>
               <tr>
                 <td>Maghrib</td>
-                <td colspan=2 ${hlMaghrib}>${maghribBegins}</td>
+                <td colspan=2 class="${maghribClass}">${
+          today.maghribBegins
+        }</td>
               </tr>
               <tr>
                 <td>Isha</td>
-                <td>${ishaBegins}</td>
-                <td ${hlIsha}>${ishaJamaat}</td></tr>
+                <td>${today.ishaBegins}</td>
+                <td class="${ishaClass}">${today.ishaJamaat}</td></tr>
               <tr>
                 <td>1st Jumah</td><td colspan=2>13:30</td>
               </tr>
