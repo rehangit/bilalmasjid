@@ -81,11 +81,24 @@
         animation: color_change 1s infinite alternate;
       }
       .changing:after {
-        content: "changing tomorrow";
+        content: "*";
         position: absolute;
-        font-size: xx-small;
+        margin-left: 4px;
         color: red;
         text-align: left;
+      }
+      .legend {
+        display: none;
+        margin-left: 4px;
+        color: red;
+        position: absolute;
+      }
+      .legend.visible {
+        display: initial;
+      }
+      .legend span {
+        font-size: small;
+        vertical-align: text-top;
       }
     </style>
   </head>
@@ -257,6 +270,11 @@
             tomorrow.ishaJamaat
           )
         ];
+        var legendClass =
+          "legend " +
+          (asarClass.includes("changing") || ishaClass.includes("changing")
+            ? "visible"
+            : "");
         var table = `
           <div class="date english">${todaysDateStr}</div>
           <div class="date islamic">${islamicDateStr}</div>
@@ -307,6 +325,7 @@
               </tr>
             </tbody>
           </table>
+          <div class="${legendClass}">* <span>Changing tomorrow</span></div>
           `;
         document.getElementById("table_div").innerHTML = table;
       }
