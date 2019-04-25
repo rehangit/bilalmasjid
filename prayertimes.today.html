@@ -2,19 +2,33 @@
   <head>
     <style>
       th {
-        background-color: gray;
-        color: white;
+        background-color: #1ac9b2;
+        color: beige;
+        border: 0.2px #17a589 solid;
       }
       th,
       td {
         text-align: center;
-        border: 0.25px rgba(128, 128, 128, 0.5) solid;
         padding: 2px 4px;
         font-size: inherit;
       }
-      th:first-child,
-      td:first-child {
+      tr {
+        background-color: #ebdac5b3;
+      }
+      td {
+        border: 0.2px rgb(250, 250, 206) solid;
+      }
+      tr:nth-child(odd) {
+        background-color: #ebdac5f3;
+      }
+      tr th:first-child,
+      tr td:first-child {
         text-align: left;
+        border-left: 0.2px #17a589 solid;
+      }
+      tr th:last-child,
+      tr td:last-child {
+        border-right: 0.2px #17a589 solid;
       }
       table {
         width: 100%;
@@ -23,6 +37,9 @@
         border-spacing: 0;
         font-size: inherit;
         border-collapse: collapse;
+      }
+      tbody {
+        border: 0.2px #17a589 solid;
       }
       body {
         margin: 0;
@@ -38,16 +55,60 @@
       }
       .date {
         text-align: center;
+        background-color: #17a589;
+        color: white;
       }
       .date.english {
         font-size: x-small;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        padding-top: 4px;
       }
       .date.islamic {
         font-weight: bold;
+        padding-bottom: 4px;
       }
       .today {
         height: 100%;
         width: 100%;
+      }
+      .highlight {
+        background-color: yellow;
+        animation: color_change 1s infinite alternate;
+      }
+      .changing:after {
+        content: "•";
+        position: absolute;
+        margin-top: -4px;
+        margin-left: 4px;
+        color: red;
+        text-align: left;
+      }
+      .legend {
+        display: none;
+        background-color: #17a589;
+        padding: 0 4px 4px;
+        color: #17a589;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        font-size: initial;
+        line-height: 0.9;
+      }
+      .legend.visible {
+        color: beige;
+      }
+      .legend span {
+        font-size: x-small;
+        vertical-align: middle;
+      }
+      .unofficial {
+        opacity: 0;
+      }
+      .unofficial:hover,
+      .unofficial:active,
+      .unofficial:focus,
+      .unofficial:focus-within {
+        opacity: 1;
       }
       @media only screen and (min-width: 240px) {
         body {
@@ -60,6 +121,9 @@
         }
         .ishraq::after {
           display: initial;
+        }
+        .legend {
+          display: block;
         }
       }
       @media only screen and (min-width: 360px) {
@@ -74,31 +138,6 @@
         to {
           background-color: greenyellow;
         }
-      }
-
-      .highlight {
-        background-color: yellow;
-        animation: color_change 1s infinite alternate;
-      }
-      .changing:after {
-        content: "*";
-        position: absolute;
-        margin-left: 4px;
-        color: red;
-        text-align: left;
-      }
-      .legend {
-        display: none;
-        margin-left: 4px;
-        color: red;
-        position: absolute;
-      }
-      .legend.visible {
-        display: initial;
-      }
-      .legend span {
-        font-size: small;
-        vertical-align: text-top;
       }
     </style>
   </head>
@@ -123,7 +162,7 @@
         })
       ]).then(([data]) => {
         drawData(data);
-        window.setInterval(() => drawData(data), 1000 * 30);
+        // window.setInterval(() => drawData(data), 1000 * 30);
 
         var hidden, visibilityChange;
         if (typeof document.hidden !== "undefined") {
@@ -181,13 +220,14 @@
           maghribJamaat,
           ishaBegins,
           ishaJamaat,
-          islamicMonth
+          islamicMonth,
+          unofficial
         ] = row.map((val, i) => {
           var [hh, mm] = val.split(":");
           if (mm) {
             const t = new Date();
             const h = Number(hh);
-            t.setHours(i > 5 && h < 12 ? h + 12 : hh);
+            t.setHours(i > 5 && i < row.length - 1 && h < 12 ? h + 12 : hh);
             t.setMinutes(mm);
             val = t.toLocaleTimeString("en-GB", timeOptions);
           }
@@ -208,7 +248,8 @@
           maghribJamaat,
           ishaBegins,
           ishaJamaat,
-          islamicMonth
+          islamicMonth,
+          unofficial
         };
       };
 
@@ -271,10 +312,9 @@
           )
         ];
         var legendClass =
-          "legend " +
-          (asarClass.includes("changing") || ishaClass.includes("changing")
+          asarClass.includes("changing") || ishaClass.includes("changing")
             ? "visible"
-            : "");
+            : "";
         var table = `
           <div class="date english">${todaysDateStr}</div>
           <div class="date islamic">${islamicDateStr}</div>
@@ -286,7 +326,9 @@
               <tr>
                 <td>Fajar</td>
                 <td>${today.fajarBegins}</td>
-                <td class="${fajarClass}">${today.fajarJamaat}</td>
+                <td class="unofficial">
+                  ${today.unofficial}
+                </td>
               </tr>
               <tr>
                 <td>Sunrise</td>
@@ -325,7 +367,7 @@
               </tr>
             </tbody>
           </table>
-          <div class="${legendClass}">* <span>Changing tomorrow</span></div>
+          <div class="legend ${legendClass}">• <span>Changing tomorrow</span></div>
           `;
         document.getElementById("table_div").innerHTML = table;
       }
