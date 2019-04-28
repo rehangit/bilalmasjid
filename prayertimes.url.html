@@ -3,23 +3,11 @@
   <body>
     <script type="text/javascript">
       window.onload = async () => {
-        var [headers, rows] = await Promise.all([
-          fetch(
-            "https://spreadsheets.google.com/feeds/cells/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/o1a4hmz/public/basic?alt=json&min-row=1&max-row=1"
-          )
-            .then(r => r.json())
-            .then(json => json.feed.entry.map(e => e.content.$t)),
-          fetch(
-            "https://spreadsheets.google.com/feeds/list/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/o1a4hmz/public/values?alt=json"
-          )
-            .then(r => r.json())
-            .then(json =>
-              json.feed.entry.map(e => [
-                e.title.$t,
-                ...e.content.$t.split(", ").map(i => i.split(": ")[1].trim())
-              ])
-            )
-        ]);
+        var [headers, rows] = await fetch(
+          "https://sheets.googleapis.com/v4/spreadsheets/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/values/formatted!A:O?key=AIzaSyCq_9F8lfiTeXuj0RoPTrOg0NufmVf6qts"
+        )
+          .then(res => res.json())
+          .then(json => [json.values[0], json.values.slice(1)]);
 
         function insertCell(value, td = "td", i) {
           if (i !== 11 && i !== 14) {
