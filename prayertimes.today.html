@@ -151,19 +151,14 @@
   <body>
     <script type="text/javascript">
       const index = new Date().getDate();
+      const range = `A${index}:P${index + 1}`;
+      console.log({ range });
       Promise.all([
         fetch(
-          "https://spreadsheets.google.com/feeds/list/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/o1a4hmz/public/values?alt=json&max-results=2&start-index=" +
-            index
+          `https://sheets.googleapis.com/v4/spreadsheets/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/values/formatted!${range}?key=AIzaSyCq_9F8lfiTeXuj0RoPTrOg0NufmVf6qts`
         )
-          .then(r => r.json())
-          .then(json => {
-            const data = json.feed.entry.map(e => [
-              e.title.$t,
-              ...e.content.$t.split(", ").map(i => i.split(": ")[1].trim())
-            ]);
-            return data;
-          }),
+          .then(res => res.json())
+          .then(({ values }) => values),
         new Promise(resolve => {
           window.onload = () => resolve();
         })
