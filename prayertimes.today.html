@@ -98,13 +98,14 @@
         color: var(--secondary);
         border-bottom-left-radius: 4px;
         border-bottom-right-radius: 4px;
-        font-size: initial;
         line-height: 0.9;
       }
       .legend.visible {
-        color: var(--lighter);
+        color: red;
+        font-size: large;
       }
-      .legend span {
+      .legend.visible span {
+        color: var(--lighter);
         font-size: x-small;
         vertical-align: middle;
       }
@@ -150,9 +151,8 @@
   </head>
   <body>
     <script type="text/javascript">
-      const index = new Date().getDate();
+      const index = new Date().getDate() + 1;
       const range = `A${index}:P${index + 1}`;
-      console.log({ range });
       Promise.all([
         fetch(
           `https://sheets.googleapis.com/v4/spreadsheets/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/values/formatted!${range}?key=AIzaSyCq_9F8lfiTeXuj0RoPTrOg0NufmVf6qts`
@@ -259,16 +259,14 @@
         var today = getRowData(data[0]);
         var tomorrow = getRowData(data[1]);
         var ishraq = formatTime(today.sunrise, 0, 15);
-        var todaysDateStr = `${today.date} ${new Date().toLocaleDateString(
-          "en-GB",
-          {
-            year: "numeric",
-            month: "long",
-            hour: "2-digit",
-            minute: "2-digit"
-            // second: "2-digit"
-          }
-        )}`;
+        var todaysDateStr = `${new Date().toLocaleDateString("en-GB", {
+          day: "numeric",
+          year: "numeric",
+          month: "long",
+          hour: "2-digit",
+          minute: "2-digit"
+          // second: "2-digit"
+        })}`;
         var islamicDateStr = `${today.islamicDate} ${
           today.islamicMonth
         } 1440 Hj`;
