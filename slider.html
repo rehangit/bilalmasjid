@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <style>
+      .slider {
+        position: relative;
+      }
+      @import url(https://fonts.googleapis.com/css?family=Open+Sans:600);
+
+      body {
+        font-family: "Open Sans", sans-serif;
+        color: #cecece;
+        background: #222;
+        overflow: hidden;
+      }
+
+      .item-1 {
+        position: absolute;
+        text-align: center;
+        display: block;
+        width: 60%;
+        animation: anim 10s cubic-bezier(1, 0, 0, 1) infinite;
+      }
+
+      @keyframes anim {
+        0% {
+          left: 100%;
+          opacity: 0;
+        }
+        50% {
+          left: 20%;
+          opacity: 1;
+        }
+        100% {
+          left: -100%;
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <p class="item-1">
+      ALWAYS PARK PROPERLY WHEN VISITING THE MOSQUE !.
+    </p>
+  </body>
+</html>
