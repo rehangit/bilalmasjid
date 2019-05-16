@@ -292,8 +292,8 @@
         };
 
         // highlight which jamaat time it is now
-        var [fajarClass, dhuhurClass, asarClass, maghribClass, ishaClass] = [
-          calcStyles(today.fajarBegins, today.sunrise),
+        var [sehriClass, dhuhurClass, asarClass, maghribClass, ishaClass] = [
+          calcStyles(today.fajarBegins, today.fajarBegins, 30, 0),
           calcStyles(today.dhurBegins, today.dhurJamaat, 0, 10),
           calcStyles(
             today.asarBegins,
@@ -325,7 +325,7 @@
             <tbody>
               <tr>
                 <td>Fajar</td>
-                <td>${today.fajarBegins}</td>
+                <td class="${sehriClass}">${today.fajarBegins}</td>
                 <td class="unofficial">
                   ${today.unofficial}
                 </td>
