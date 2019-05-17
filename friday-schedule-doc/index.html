@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+    <? var data = getData() ?>
+    <div class="main">
+      <div class="wrapper">
+        <?!= data ?>
+      </div>
+    </div>
+    <style>
+    .main {
+    height: 100%;
+    width: 100%;
+    display: table;
+    }
+    .wrapper {
+      vertical-align: middle;
+      text-align: center;
+      display: table-cell;
+      height: 100%;
+    }
+    html, body {
+    height: 96%;
+    }
+    .c7 {
+     max-width:initial !important;
+    }
+    </style>  
+  </body>
+
+</html>
+
+
