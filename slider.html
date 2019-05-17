@@ -1,13 +1,8 @@
 <html>
   <head>
     <style>
-      .slider {
-        position: relative;
-      }
-      @import url(https://fonts.googleapis.com/css?family=Open+Sans:600);
-
       body {
-        font-family: "Open Sans", sans-serif;
+        font-family: sans-serif;
         color: #cecece;
         background: #222;
         overflow: hidden;
@@ -18,7 +13,7 @@
         text-align: center;
         display: block;
         width: 60%;
-        animation: anim 10s cubic-bezier(1, 0, 0, 1) infinite;
+        animation: anim 10s ease infinite;
       }
 
       @keyframes anim {
@@ -26,8 +21,20 @@
           left: 100%;
           opacity: 0;
         }
-        50% {
+        20%,
+        80% {
           left: 20%;
+          opacity: 1;
+        }
+        50%,
+        54%,
+        58% {
+          opacity: 0;
+        }
+        48%,
+        52%,
+        56%,
+        60% {
           opacity: 1;
         }
         100% {
