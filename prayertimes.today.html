@@ -155,10 +155,8 @@
       const range = `A${index}:P${index + 1}`;
       Promise.all([
         fetch(
-          `https://sheets.googleapis.com/v4/spreadsheets/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/values/formatted!${range}?key=AIzaSyCq_9F8lfiTeXuj0RoPTrOg0NufmVf6qts`
-        )
-          .then(res => res.json())
-          .then(({ values }) => values),
+          `https://script.google.com/a/macros/bilalmasjid.co.uk/s/AKfycbx32N0Mu6rh15Jj_WULEwdxGY7NKpzm7PTg8NpYy8dW-Iz5VIr9/exec?name=formatted&range=${range}`
+        ).then(res => res.json()),
         new Promise(resolve => {
           window.onload = () => resolve();
         })
