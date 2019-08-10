@@ -1,12 +1,20 @@
 <html>
   <head>
     <style>
-      :root {
+      /* :root {
         --primary: hsl(256, 58%, 20%);
         --secondary: hsl(224, 32%, 50%);
         --darker: hsl(202, 48%, 80%);
         --lighter: hsl(202, 48%, 90%);
         --border: hsl(202, 48%, 97%);
+      } */
+      :root {
+        --hue: 44;
+        --primary: hsl(var(--hue), 58%, 20%);
+        --secondary: hsl(var(--hue), 32%, 50%);
+        --darker: hsl(var(--hue), 48%, 80%);
+        --lighter: hsl(var(--hue), 48%, 90%);
+        --border: hsl(var(--hue), 48%, 97%);
       }
       .today {
         height: 100%;
@@ -255,7 +263,7 @@
 
       function drawData(data) {
         var today = getRowData(data[0]);
-        var tomorrow = getRowData(data[1]||data[0]);
+        var tomorrow = getRowData(data[1] || data[0]);
         var ishraq = formatTime(today.sunrise, 0, 15);
         var todaysDateStr = `${new Date().toLocaleDateString("en-GB", {
           day: "numeric",
