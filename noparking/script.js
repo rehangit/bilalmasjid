@@ -15,7 +15,6 @@ function doUppercase() {
 }
 
 function selectPrayerTime() {
-  console.log("i am here");
   const elem = document.getElementById("prayer-time");
   if (elem.selectedIndex !== 0) return;
   const today = new Date();
@@ -52,21 +51,10 @@ window.onload = function(e) {
   document.getElementsByName("image-map")[0].addEventListener("click", function(e) {
     const location = document.getElementsByName("Location")[0];
     location.selectedIndex = e.target.title;
-    const [x, y, r] = e.target.coords.split(",").map(Number);
-    const highlight = document.getElementsByClassName("highlight")[0];
-    highlight.style.left = `${x - r}px`;
-    highlight.style.top = `${y - r}px`;
-    highlight.style.width = `${2 * r}px`;
-    highlight.style.height = `${2 * r}px`;
-    highlight.textContent = e.target.title;
-    highlight.style.lineHeight = `${2 * r - 8}px`;
-    showMap(false);
+    showHighlight(e.target);
   });
 
   selectPrayerTime();
-  document.getElementById("capture").addEventListener("change", e => {
-    console.log(e);
-  });
 };
 
 function adjustAreaMap(e) {
@@ -84,7 +72,53 @@ function adjustAreaMap(e) {
       .join(",");
   });
 }
-function recognizeReg() {}
+function recognizeReg(elem) {
+  const origClass = elem.parentElement.firstElementChild.className;
+  elem.parentElement.firstElementChild.className = "fa fa-cog fa-spin";
+  readFileContents(elem.files[0])
+    .then(data =>
+      fetch(
+        "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyBAQdSbOWJttXYeXCz4wJqniTje-QLRdjE",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            requests: [
+              {
+                image: { content: data.split(",")[1] },
+                features: [
+                  {
+                    type: "TEXT_DETECTION",
+                    maxResults: 1
+                  }
+                ]
+              }
+            ]
+          })
+        }
+      )
+    )
+    .then(res => res.json())
+    .then(res => {
+      const text = res.responses[0].fullTextAnnotation.text.trim();
+      const reg = text.match(/[A-Z]{2,3}[0-9]{1,2}\s{1}[A-Z0]{3}/g)[0];
+      console.log({ text, reg });
+      document.getElementById("regInput").value = reg;
+      elem.parentElement.firstElementChild.className = origClass;
+    })
+    .catch(() => {
+      elem.parentElement.firstElementChild.className = origClass;
+    });
+}
+
+function readFileContents(file) {
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      resolve(reader.result);
+    });
+    reader.readAsDataURL(file);
+  });
+}
 
 function formSubmit() {
   submitted = true;
@@ -102,4 +136,16 @@ function showMap(show) {
   }
 
   imagemap.style.maxHeight = height;
+}
+
+function showHighlight(target) {
+  const [x, y, r] = target.coords.split(",").map(Number);
+  const highlight = document.getElementsByClassName("highlight")[0];
+  highlight.style.left = `${x - r}px`;
+  highlight.style.top = `${y - r}px`;
+  highlight.style.width = `${2 * r}px`;
+  highlight.style.height = `${2 * r}px`;
+  highlight.textContent = target.title;
+  highlight.style.lineHeight = `${2 * r - 8}px`;
+  showMap(false);
 }

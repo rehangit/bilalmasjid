@@ -78,7 +78,12 @@
             />
             <label class="form-control reg reg-capture" for="capture">
               <i class="fa fa-camera"></i>
-              <input type="file" accept="image/*" id="capture" />
+              <input
+                type="file"
+                accept="image/*"
+                id="capture"
+                onchange="recognizeReg(this)"
+              />
             </label>
           </div>
         </div>
