@@ -51,7 +51,7 @@ window.onload = function(e) {
   document.getElementsByName("image-map")[0].addEventListener("click", function(e) {
     const location = document.getElementsByName("Location")[0];
     location.selectedIndex = e.target.title;
-    showHighlight(e.target);
+    adjustHighlight(e.target);
   });
 
   selectPrayerTime();
@@ -73,8 +73,12 @@ function adjustAreaMap(e) {
   });
 }
 function recognizeReg(elem) {
-  const origClass = elem.parentElement.firstElementChild.className;
-  elem.parentElement.firstElementChild.className = "fa fa-cog fa-spin";
+  const regInput = document.getElementById("regInput");
+  regInput.value = "";
+  regInput.disabled = true;
+  const icon = elem.parentElement.firstElementChild;
+  const origClass = icon.className;
+  icon.className = "fa fa-cog fa-spin";
   readFileContents(elem.files[0])
     .then(data =>
       fetch(
@@ -100,13 +104,16 @@ function recognizeReg(elem) {
     .then(res => res.json())
     .then(res => {
       const text = res.responses[0].fullTextAnnotation.text.trim();
-      const reg = text.match(/[A-Z]{2,3}[0-9]{1,2}\s{1}[A-Z0]{3}/g)[0];
+      const match = text.match(/[A-Z]{2,3}[0-9]{1,2}\s{1}[A-Z0]{3}/g);
+      const reg = match ? match[0] : text;
       console.log({ text, reg });
-      document.getElementById("regInput").value = reg;
-      elem.parentElement.firstElementChild.className = origClass;
+      regInput.value = reg;
+      icon.className = origClass;
+      regInput.disabled = false;
     })
     .catch(() => {
-      elem.parentElement.firstElementChild.className = origClass;
+      regInput.disabled = false;
+      icon.className = origClass;
     });
 }
 
@@ -138,14 +145,21 @@ function showMap(show) {
   imagemap.style.maxHeight = height;
 }
 
-function showHighlight(target) {
-  const [x, y, r] = target.coords.split(",").map(Number);
+function adjustHighlight(selectedArea) {
+  const [x, y, r] = selectedArea.coords.split(",").map(Number);
   const highlight = document.getElementsByClassName("highlight")[0];
   highlight.style.left = `${x - r}px`;
   highlight.style.top = `${y - r}px`;
   highlight.style.width = `${2 * r}px`;
   highlight.style.height = `${2 * r}px`;
-  highlight.textContent = target.title;
+  highlight.textContent = selectedArea.title;
   highlight.style.lineHeight = `${2 * r - 8}px`;
   showMap(false);
+}
+
+function selectLocation(elem) {
+  const index = elem.selectedIndex;
+  const selectedArea = document.querySelectorAll(".imagemap map area")[index - 1];
+  console.log(elem.selectedIndex, selectedArea);
+  adjustHighlight(selectedArea);
 }
