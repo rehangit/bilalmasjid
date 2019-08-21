@@ -72,18 +72,41 @@ function adjustAreaMap(e) {
       .join(",");
   });
 }
+
+let controller = null;
 function recognizeReg(elem) {
   const regInput = document.getElementById("regInput");
-  regInput.value = "";
-  regInput.disabled = true;
   const icon = elem.parentElement.firstElementChild;
   const origClass = icon.className;
-  icon.className = "fa fa-cog fa-spin";
-  readFileContents(elem.files[0])
-    .then(data =>
+
+  function clickCancel(e) {
+    if (controller) {
+      console.log("Abortng download");
+      controller.abort();
+      controller = undefined;
+      icon.className = origClass;
+      regInput.disabled = false;
+      e.preventDefault();
+      e.stopPropagation();
+      elem.removeEventListener("click", clickCancel);
+      elem.removeEventListener("keypress", clickCancel);
+    }
+  }
+  elem.addEventListener("click", clickCancel);
+  elem.addEventListener("keypress", clickCancel);
+
+  elem.files &&
+    elem.files[0] &&
+    readFileContents(elem.files[0]).then(data => {
+      regInput.value = "";
+      regInput.disabled = true;
+      icon.className = "fa fa-cog fa-spin";
+      controller = new AbortController();
+      console.log("Fetch started");
       fetch(
         "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyBAQdSbOWJttXYeXCz4wJqniTje-QLRdjE",
         {
+          signal: controller.signal,
           method: "POST",
           body: JSON.stringify({
             requests: [
@@ -100,20 +123,22 @@ function recognizeReg(elem) {
           })
         }
       )
-    )
-    .then(res => res.json())
-    .then(res => {
-      const text = res.responses[0].fullTextAnnotation.text.trim();
-      const match = text.match(/[A-Z]{2,3}[0-9]{1,2}\s{1}[A-Z0]{3}/g);
-      const reg = match ? match[0] : text;
-      console.log({ text, reg });
-      regInput.value = reg;
-      icon.className = origClass;
-      regInput.disabled = false;
-    })
-    .catch(() => {
-      regInput.disabled = false;
-      icon.className = origClass;
+        .then(res => res.json())
+        .then(res => {
+          const text = res.responses[0].fullTextAnnotation.text.trim();
+          const match = text.match(/[A-Z]{2,3}[0-9]{1,2}\s{1}[A-Z0]{3}/g);
+          const reg = match ? match[0] : text;
+          console.log({ text, reg });
+          regInput.value = reg;
+          icon.className = origClass;
+          regInput.disabled = false;
+          controller = null;
+        })
+        .catch(() => {
+          regInput.disabled = false;
+          icon.className = origClass;
+          controller = null;
+        });
     });
 }
 
