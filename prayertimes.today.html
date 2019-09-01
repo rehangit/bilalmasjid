@@ -9,7 +9,7 @@
         --border: hsl(202, 48%, 97%);
       } */
       :root {
-        --hue: 44;
+        --hue: 170;
         --primary: hsl(var(--hue), 58%, 20%);
         --secondary: hsl(var(--hue), 32%, 50%);
         --darker: hsl(var(--hue), 48%, 80%);
@@ -228,7 +228,7 @@
           maghribJamaat,
           ishaBegins,
           ishaJamaat,
-          islamicMonth,
+          islamicMonthNumber,
           unofficial
         ] = row.map((val, i) => {
           var [hh, mm] = val.split(":");
@@ -241,6 +241,21 @@
           }
           return val;
         });
+        const islamicMonthNames = [
+          "Muharram",
+          "Safar",
+          "Rabi al-Awwal",
+          "Rabi ath-Thānī",
+          "Jumadi ul-Ula",
+          "Jumadi ul-Akhirah",
+          "Rajab",
+          "Sha‘ban",
+          "Ramadhan",
+          "Shawwal",
+          "Dhul-Qa‘dah",
+          "Dhul-Hijjah"
+        ];
+        const islamicMonth = islamicMonthNames[islamicMonthNumber - 1];
         return {
           date,
           islamicDate,
@@ -273,9 +288,7 @@
           minute: "2-digit"
           // second: "2-digit"
         })}`;
-        var islamicDateStr = `${today.islamicDate} ${
-          today.islamicMonth
-        } 1440 Hj`;
+        var islamicDateStr = `${today.islamicDate} ${today.islamicMonth} 1440 Hj`;
         var timeToMins = t => {
           const [h, m] = t
             .replace(/[^ -~]/g, "")
@@ -357,9 +370,7 @@
               </tr>
               <tr>
                 <td>Maghrib</td>
-                <td colspan=2 class="${maghribClass}">${
-          today.maghribBegins
-        }</td>
+                <td colspan=2 class="${maghribClass}">${today.maghribBegins}</td>
               </tr>
               <tr>
                 <td>Isha</td>
