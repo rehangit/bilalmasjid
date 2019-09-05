@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      .button {
+        border: 1px solid gray;
+        display: block;
+        padding: 4px;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        font-family: sans-serif;
+      }
+    </style>
+    <script>
+      fetch(
+        "https://script.google.com/macros/s/AKfycby-1hbi4vzslXXCQ2FthrjhiLFQzuEFnqP-QDANOFicAUSDfwc/exec?file=timetable"
+      )
+        .then(res => res.text())
+        .then(url => {
+          console.log(url);
+          document.getElementById("download").setAttribute("href", url);
+        });
+    </script>
+    <a href="" id="download" class="button">Download PDF</a>
+  </body>
+</html>
