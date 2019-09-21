@@ -160,182 +160,149 @@
   </head>
   <body>
     <script type="text/javascript">
-      const index = new Date().getDate() + 1;
-      const range = `A${index}:P${index + 1}`;
-      Promise.all([
-        fetch(
-          `https://script.google.com/a/macros/bilalmasjid.co.uk/s/AKfycbx32N0Mu6rh15Jj_WULEwdxGY7NKpzm7PTg8NpYy8dW-Iz5VIr9/exec?name=formatted&range=${range}`
-        ).then(res => res.json()),
-        new Promise(resolve => {
-          window.onload = () => resolve();
-        })
-      ]).then(([data]) => {
-        drawData(data);
-        window.setInterval(() => drawData(data), 1000 * 30);
+      window.onload = () => {
+        const index = new Date().getDate() + 1;
+        const range = `A${index}:P${index + 1}`;
 
-        var hidden, visibilityChange;
-        if (typeof document.hidden !== "undefined") {
-          // Opera 12.10 and Firefox 18 and later support
-          hidden = "hidden";
-          visibilityChange = "visibilitychange";
-        } else if (typeof document.msHidden !== "undefined") {
-          hidden = "msHidden";
-          visibilityChange = "msvisibilitychange";
-        } else if (typeof document.webkitHidden !== "undefined") {
-          hidden = "webkitHidden";
-          visibilityChange = "webkitvisibilitychange";
-        }
-        function handleVisibilityChange() {
-          if (!document[hidden]) {
-            () => drawData(data);
-          }
-        }
-        document.addEventListener(
-          visibilityChange,
-          handleVisibilityChange,
-          false
-        );
-      });
-
-      const timeOptions = {
-        hour12: false,
-        hour: "numeric",
-        minute: "2-digit"
-      };
-
-      function formatTime(time, incH = 0, incM = 0) {
-        var split = time.replace(/[^ -~]/g, "").split(/[\:\s]/);
-        var t = new Date();
-        t.setHours(Number(split[0]) + incH);
-        t.setMinutes(Number(split[1]) + incM);
-        return t
-          .toLocaleTimeString("en-GB", timeOptions)
-          .replace(/[^ -~]/g, "");
-      }
-
-      var getRowData = row => {
-        var [
-          date,
-          islamicDate,
-          day,
-          fajarBegins,
-          sunrise,
-          fajarJamaat,
-          dhurBegins,
-          dhurJamaat,
-          asarBegins,
-          asarJamaat,
-          maghribBegins,
-          maghribJamaat,
-          ishaBegins,
-          ishaJamaat,
-          islamicMonthNumber,
-          unofficial
-        ] = row.map((val, i) => {
-          var [hh, mm] = val.split(":");
-          if (mm) {
-            const t = new Date();
-            const h = Number(hh);
-            t.setHours(i > 5 && i < row.length - 1 && h < 12 ? h + 12 : hh);
-            t.setMinutes(mm);
-            val = t.toLocaleTimeString("en-GB", timeOptions);
-          }
-          return val;
-        });
-        const islamicMonthNames = [
-          "Muharram",
-          "Safar",
-          "Rabi al-Awwal",
-          "Rabi ath-Thānī",
-          "Jumadi ul-Ula",
-          "Jumadi ul-Akhirah",
-          "Rajab",
-          "Sha‘ban",
-          "Ramadhan",
-          "Shawwal",
-          "Dhul-Qa‘dah",
-          "Dhul-Hijjah"
-        ];
-        const islamicMonth = islamicMonthNames[islamicMonthNumber - 1];
-        return {
-          date,
-          islamicDate,
-          day,
-          fajarBegins,
-          sunrise,
-          fajarJamaat,
-          dhurBegins,
-          dhurJamaat,
-          asarBegins,
-          asarJamaat,
-          maghribBegins,
-          maghribJamaat,
-          ishaBegins,
-          ishaJamaat,
-          islamicMonth,
-          unofficial
-        };
-      };
-
-      function drawData(data) {
-        var today = getRowData(data[0]);
-        var tomorrow = getRowData(data[1] || data[0]);
-        var ishraq = formatTime(today.sunrise, 0, 15);
-        var todaysDateStr = `${new Date().toLocaleDateString("en-GB", {
-          day: "numeric",
-          year: "numeric",
-          month: "long",
-          hour: "2-digit",
+        const timeOptions = {
+          hour12: false,
+          hour: "numeric",
           minute: "2-digit"
-          // second: "2-digit"
-        })}`;
-        var islamicDateStr = `${today.islamicDate} ${today.islamicMonth} 1440 Hj`;
-        var timeToMins = t => {
-          const [h, m] = t
-            .replace(/[^ -~]/g, "")
-            .split(":")
-            .map(Number);
-          return h * 60 + m;
         };
 
-        var calcStyles = (begins, jamaat, before = 0, after = 0, next) => {
-          const style = [];
-          var now = timeToMins(
-            new Date().toLocaleTimeString("en-GB", timeOptions).slice(0, 5)
-          );
-          var from = timeToMins(begins) - before;
-          var jamaatTime = timeToMins(jamaat);
-          var to = jamaatTime + after;
-          style.push(from <= now && now < to ? "highlight" : "");
-          if (next && jamaatTime !== timeToMins(next)) style.push("changing");
-          return style.join(" ");
+        function formatTime(time, incH = 0, incM = 0) {
+          var split = time.replace(/[^ -~]/g, "").split(/[\:\s]/);
+          var t = new Date();
+          t.setHours(Number(split[0]) + incH);
+          t.setMinutes(Number(split[1]) + incM);
+          return t
+            .toLocaleTimeString("en-GB", timeOptions)
+            .replace(/[^ -~]/g, "");
+        }
+
+        var getRowData = row => {
+          var [
+            date,
+            islamicDate,
+            day,
+            fajarBegins,
+            sunrise,
+            fajarJamaat,
+            dhurBegins,
+            dhurJamaat,
+            asarBegins,
+            asarJamaat,
+            maghribBegins,
+            maghribJamaat,
+            ishaBegins,
+            ishaJamaat,
+            islamicMonthNumber,
+            unofficial
+          ] = row.map((val, i) => {
+            var [hh, mm] = val.split(":");
+            if (mm) {
+              const t = new Date();
+              const h = Number(hh);
+              t.setHours(i > 5 && i < row.length - 1 && h < 12 ? h + 12 : hh);
+              t.setMinutes(mm);
+              val = t.toLocaleTimeString("en-GB", timeOptions);
+            }
+            return val;
+          });
+          const islamicMonthNames = [
+            "Muharram",
+            "Safar",
+            "Rabi al-Awwal",
+            "Rabi ath-Thānī",
+            "Jumadi ul-Ula",
+            "Jumadi ul-Akhirah",
+            "Rajab",
+            "Sha‘ban",
+            "Ramadhan",
+            "Shawwal",
+            "Dhul-Qa‘dah",
+            "Dhul-Hijjah"
+          ];
+          const islamicMonth = islamicMonthNames[islamicMonthNumber - 1];
+          return {
+            date,
+            islamicDate,
+            day,
+            fajarBegins,
+            sunrise,
+            fajarJamaat,
+            dhurBegins,
+            dhurJamaat,
+            asarBegins,
+            asarJamaat,
+            maghribBegins,
+            maghribJamaat,
+            ishaBegins,
+            ishaJamaat,
+            islamicMonth,
+            unofficial
+          };
         };
 
-        // highlight which jamaat time it is now
-        var [sehriClass, dhuhurClass, asarClass, maghribClass, ishaClass] = [
-          calcStyles(today.fajarBegins, today.fajarBegins, 30, 0),
-          calcStyles(today.dhurBegins, today.dhurJamaat, 0, 10),
-          calcStyles(
-            today.asarBegins,
-            today.asarJamaat,
-            0,
-            10,
-            tomorrow.asarJamaat
-          ),
-          calcStyles(today.maghribBegins, today.maghribBegins, 10, 10),
-          calcStyles(
-            today.ishaBegins,
-            today.ishaJamaat,
-            0,
-            10,
-            tomorrow.ishaJamaat
-          )
-        ];
-        var legendClass =
-          asarClass.includes("changing") || ishaClass.includes("changing")
-            ? "visible"
-            : "";
-        var table = `
+        function drawData(data) {
+          var today = getRowData(data[0]);
+          var tomorrow = getRowData(data[1] || data[0]);
+          var ishraq = formatTime(today.sunrise, 0, 15);
+          var todaysDateStr = `${new Date().toLocaleDateString("en-GB", {
+            day: "numeric",
+            year: "numeric",
+            month: "long",
+            hour: "2-digit",
+            minute: "2-digit"
+            // second: "2-digit"
+          })}`;
+          var islamicDateStr = `${today.islamicDate} ${today.islamicMonth} 1440 Hj`;
+          var timeToMins = t => {
+            const [h, m] = t
+              .replace(/[^ -~]/g, "")
+              .split(":")
+              .map(Number);
+            return h * 60 + m;
+          };
+
+          var calcStyles = (begins, jamaat, before = 0, after = 0, next) => {
+            const style = [];
+            var now = timeToMins(
+              new Date().toLocaleTimeString("en-GB", timeOptions).slice(0, 5)
+            );
+            var from = timeToMins(begins) - before;
+            var jamaatTime = timeToMins(jamaat);
+            var to = jamaatTime + after;
+            style.push(from <= now && now < to ? "highlight" : "");
+            if (next && jamaatTime !== timeToMins(next)) style.push("changing");
+            return style.join(" ");
+          };
+
+          // highlight which jamaat time it is now
+          var [sehriClass, dhuhurClass, asarClass, maghribClass, ishaClass] = [
+            calcStyles(today.fajarBegins, today.fajarBegins, 30, 0),
+            calcStyles(today.dhurBegins, today.dhurJamaat, 0, 10),
+            calcStyles(
+              today.asarBegins,
+              today.asarJamaat,
+              0,
+              10,
+              tomorrow.asarJamaat
+            ),
+            calcStyles(today.maghribBegins, today.maghribBegins, 10, 10),
+            calcStyles(
+              today.ishaBegins,
+              today.ishaJamaat,
+              0,
+              10,
+              tomorrow.ishaJamaat
+            )
+          ];
+          var legendClass =
+            asarClass.includes("changing") || ishaClass.includes("changing")
+              ? "visible"
+              : "";
+          var table = `
           <div class="date english">${todaysDateStr}</div>
           <div class="date islamic">${islamicDateStr}</div>
           <table class="table">
@@ -388,8 +355,34 @@
           </table>
           <div class="legend ${legendClass}">• <span>Changing tomorrow</span></div>
           `;
-        document.getElementById("table_div").innerHTML = table;
-      }
+          document.getElementById("table_div").innerHTML = table;
+        }
+
+        const storedData = JSON.parse(
+          window.localStorage.getItem("todays-times")
+        );
+        const dateString = new Date().toLocaleDateString();
+        console.log(storedData, dateString);
+        if (storedData && storedData.dateString === dateString) {
+          drawData(storedData.data);
+        }
+
+        fetch(
+          `https://script.google.com/a/macros/bilalmasjid.co.uk/s/AKfycbx32N0Mu6rh15Jj_WULEwdxGY7NKpzm7PTg8NpYy8dW-Iz5VIr9/exec?name=formatted&range=${range}`
+        )
+          .then(res => res.json())
+          .then(data => {
+            drawData(data);
+            window.localStorage.setItem(
+              "todays-times",
+              JSON.stringify({
+                data,
+                dateString
+              })
+            );
+            //window.setInterval(() => drawData(data), 1000 * 30);
+          });
+      };
     </script>
     <div id="table_div" class="today"></div>
   </body>
