@@ -244,7 +244,7 @@
           };
         };
 
-        function drawData(data) {
+        function drawData(data, cached) {
           var today = getRowData(data[0]);
           var tomorrow = getRowData(data[1] || data[0]);
           var ishraq = formatTime(today.sunrise, 0, 15);
@@ -355,7 +355,9 @@
           </table>
           <div class="legend ${legendClass}">• <span>Changing tomorrow</span></div>
           `;
-          document.getElementById("table_div").innerHTML = table;
+          const table_div = document.getElementById("table_div");
+          table_div.innerHTML = table;
+          table_div.style.opacity = cached ? 0.5 : 1.0;
         }
 
         const storedData = JSON.parse(
@@ -364,7 +366,7 @@
         const dateString = new Date().toLocaleDateString();
         console.log(storedData, dateString);
         if (storedData && storedData.dateString === dateString) {
-          drawData(storedData.data);
+          drawData(storedData.data, true);
         }
 
         fetch(
@@ -380,7 +382,7 @@
                 dateString
               })
             );
-            //window.setInterval(() => drawData(data), 1000 * 30);
+            window.setInterval(() => drawData(data), 1000 * 30);
           });
       };
     </script>
