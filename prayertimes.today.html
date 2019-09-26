@@ -224,6 +224,7 @@
             "Dhul-Hijjah"
           ];
           const islamicMonth = islamicMonthNames[islamicMonthNumber - 1];
+
           return {
             date,
             islamicDate,
@@ -244,18 +245,21 @@
           };
         };
 
-        function drawData(data, cached) {
+        function drawData(data, dateString, cached) {
           var today = getRowData(data[0]);
           var tomorrow = getRowData(data[1] || data[0]);
           var ishraq = formatTime(today.sunrise, 0, 15);
-          var todaysDateStr = `${new Date().toLocaleDateString("en-GB", {
+          var todaysDateStr = `${(dateString
+            ? new Date(dateString)
+            : new Date()
+          ).toLocaleDateString("en-GB", {
             day: "numeric",
             year: "numeric",
             month: "long",
             hour: "2-digit",
             minute: "2-digit"
-            // second: "2-digit"
           })}`;
+
           var islamicDateStr = `${today.islamicDate} ${today.islamicMonth} 1440 Hj`;
           var timeToMins = t => {
             const [h, m] = t
@@ -364,9 +368,8 @@
           window.localStorage.getItem("todays-times")
         );
         const dateString = new Date().toLocaleDateString();
-        console.log(storedData, dateString);
-        if (storedData && storedData.dateString === dateString) {
-          drawData(storedData.data, true);
+        if (storedData && storedData.dateString) {
+          drawData(storedData.data, dateString, true);
         }
 
         fetch(
