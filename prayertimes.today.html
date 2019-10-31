@@ -191,8 +191,9 @@
   </head>
   <body>
     <script type="text/javascript">
+      const dateToday = new Date();
       window.onload = () => {
-        const index = new Date().getDate() + 1;
+        const index = dateToday.getDate() + 1;
         const range = `A${index}:P${index + 1}`;
 
         const timeOptions = {
@@ -203,7 +204,7 @@
 
         function formatTime(time, incH = 0, incM = 0) {
           var split = time.replace(/[^ -~]/g, "").split(/[\:\s]/);
-          var t = new Date();
+          var t = dateToday;
           t.setHours(Number(split[0]) + incH);
           t.setMinutes(Number(split[1]) + incM);
           return t
@@ -232,9 +233,10 @@
           ] = row.map((val, i) => {
             var [hh, mm] = val.split(":");
             if (mm) {
-              const t = new Date();
+              const t = dateToday;
               const h = Number(hh);
-              t.setHours(i > 5 && i < row.length - 1 && h < 12 ? h + 12 : hh);
+              //t.setHours(i > 5 && i < row.length - 1 && h < 12 ? h + 12 : hh);
+              t.setHours(hh);
               t.setMinutes(mm);
               val = t.toLocaleTimeString("en-GB", timeOptions);
             }
@@ -282,7 +284,7 @@
           var ishraq = formatTime(today.sunrise, 0, 15);
           var todaysDateStr = `${(dateString
             ? new Date(dateString)
-            : new Date()
+            : dateToday
           ).toLocaleDateString("en-GB", {
             day: "numeric",
             year: "numeric",
@@ -303,7 +305,7 @@
           var calcStyles = (begins, jamaat, before = 0, after = 0, next) => {
             const style = [];
             var now = timeToMins(
-              new Date().toLocaleTimeString("en-GB", timeOptions).slice(0, 5)
+              dateToday.toLocaleTimeString("en-GB", timeOptions).slice(0, 5)
             );
             var from = timeToMins(begins) - before;
             var jamaatTime = timeToMins(jamaat);
@@ -400,7 +402,7 @@
         const storedData = JSON.parse(
           window.localStorage.getItem("todays-times")
         );
-        const dateString = new Date().toLocaleDateString();
+        const dateString = dateToday.toLocaleDateString();
         if (storedData && storedData.dateString) {
           drawData(storedData.data, dateString, true);
         }
