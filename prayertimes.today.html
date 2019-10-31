@@ -381,10 +381,10 @@
                 <td>${today.ishaBegins}</td>
                 <td class="${ishaClass}">${today.ishaJamaat}</td></tr>
               <tr>
-                <td>1st Jumah</td><td colspan=2>13:30</td>
+                <td>1st Jumah</td><td colspan=2>12:30</td>
               </tr>
               <tr>
-                <td>2nd Jumah</td><td colspan=2>14:15</td>
+                <td>2nd Jumah</td><td colspan=2>13:15</td>
               </tr>
             </tbody>
           </table>
@@ -406,7 +406,7 @@
         }
 
         fetch(
-          `https://script.google.com/a/macros/bilalmasjid.co.uk/s/AKfycbx32N0Mu6rh15Jj_WULEwdxGY7NKpzm7PTg8NpYy8dW-Iz5VIr9/exec?name=formatted&range=${range}`
+          `https://script.google.com/a/macros/bilalmasjid.co.uk/s/AKfycbx32N0Mu6rh15Jj_WULEwdxGY7NKpzm7PTg8NpYy8dW-Iz5VIr9/exec?name=calc-formatted&range=${range}`
         )
           .then(res => res.json())
           .then(data => {
