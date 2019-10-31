@@ -4,7 +4,7 @@
     <script type="text/javascript">
       window.onload = async () => {
         var [headers, rows] = await fetch(
-          "https://sheets.googleapis.com/v4/spreadsheets/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/values/formatted!A:O?key=AIzaSyCq_9F8lfiTeXuj0RoPTrOg0NufmVf6qts"
+          "https://sheets.googleapis.com/v4/spreadsheets/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/values/calc-formatted!A:O?key=AIzaSyCq_9F8lfiTeXuj0RoPTrOg0NufmVf6qts"
         )
           .then(res => res.json())
           .then(json => [json.values[0], json.values.slice(1)]);
@@ -32,9 +32,7 @@
           <table class='table'>
             <thead>${insertRow(headers, "headerRow", "th")}</thead>
             <tbody>${rows
-              .map(row =>
-                insertRow(row, row[0] == today ? "selectedTableRow" : "")
-              )
+              .map(row => insertRow(row, row[0] == today ? "selectedTableRow" : ""))
               .join("")}</tbody>
           </table>
         `;
@@ -44,8 +42,8 @@
     <style>
       body {
         margin: 0;
-        font-family: Lato, "Trebuchet MS", "Lucida Sans Unicode",
-          "Lucida Grande", "Lucida Sans", sans-serif;
+        font-family: Lato, "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans",
+          sans-serif;
       }
 
       .table {

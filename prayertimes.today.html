@@ -78,8 +78,8 @@
       }
       body {
         margin: 0;
-        font-family: Lato, "Trebuchet MS", "Lucida Sans Unicode",
-          "Lucida Grande", "Lucida Sans", sans-serif;
+        font-family: Lato, "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans",
+          sans-serif;
         font-size: 10pt;
       }
       .ishraq::after {
@@ -207,9 +207,7 @@
           var t = dateToday;
           t.setHours(Number(split[0]) + incH);
           t.setMinutes(Number(split[1]) + incM);
-          return t
-            .toLocaleTimeString("en-GB", timeOptions)
-            .replace(/[^ -~]/g, "");
+          return t.toLocaleTimeString("en-GB", timeOptions).replace(/[^ -~]/g, "");
         }
 
         var getRowData = row => {
@@ -274,7 +272,9 @@
             ishaBegins,
             ishaJamaat,
             islamicMonth,
-            unofficial
+            unofficial,
+            firstJumah: "12:45",
+            secondJumah: "13:15"
           };
         };
 
@@ -282,16 +282,16 @@
           var today = getRowData(data[0]);
           var tomorrow = getRowData(data[1] || data[0]);
           var ishraq = formatTime(today.sunrise, 0, 15);
-          var todaysDateStr = `${(dateString
-            ? new Date(dateString)
-            : dateToday
-          ).toLocaleDateString("en-GB", {
-            day: "numeric",
-            year: "numeric",
-            month: "long",
-            hour: "2-digit",
-            minute: "2-digit"
-          })}`;
+          var todaysDateStr = `${(dateString ? new Date(dateString) : dateToday).toLocaleDateString(
+            "en-GB",
+            {
+              day: "numeric",
+              year: "numeric",
+              month: "long",
+              hour: "2-digit",
+              minute: "2-digit"
+            }
+          )}`;
 
           var islamicDateStr = `${today.islamicDate} ${today.islamicMonth} 1440 Hj`;
           var timeToMins = t => {
@@ -304,9 +304,7 @@
 
           var calcStyles = (begins, jamaat, before = 0, after = 0, next) => {
             const style = [];
-            var now = timeToMins(
-              dateToday.toLocaleTimeString("en-GB", timeOptions).slice(0, 5)
-            );
+            var now = timeToMins(dateToday.toLocaleTimeString("en-GB", timeOptions).slice(0, 5));
             var from = timeToMins(begins) - before;
             var jamaatTime = timeToMins(jamaat);
             var to = jamaatTime + after;
@@ -319,78 +317,67 @@
           var [sehriClass, dhuhurClass, asarClass, maghribClass, ishaClass] = [
             calcStyles(today.fajarBegins, today.fajarBegins, 30, 0),
             calcStyles(today.dhurBegins, today.dhurJamaat, 0, 10),
-            calcStyles(
-              today.asarBegins,
-              today.asarJamaat,
-              0,
-              10,
-              tomorrow.asarJamaat
-            ),
+            calcStyles(today.asarBegins, today.asarJamaat, 0, 10, tomorrow.asarJamaat),
             calcStyles(today.maghribBegins, today.maghribBegins, 10, 10),
-            calcStyles(
-              today.ishaBegins,
-              today.ishaJamaat,
-              0,
-              10,
-              tomorrow.ishaJamaat
-            )
+            calcStyles(today.ishaBegins, today.ishaJamaat, 0, 10, tomorrow.ishaJamaat)
           ];
           var legendClass =
-            asarClass.includes("changing") || ishaClass.includes("changing")
-              ? "visible"
-              : "";
+            asarClass.includes("changing") || ishaClass.includes("changing") ? "visible" : "";
+          console.log({ today });
           var table = `
-          <div class="date english">${todaysDateStr}</div>
-          <div class="date islamic">${islamicDateStr}</div>
-          <table class="table">
-            <thead>
-              <tr><th>Salah</th><th>Begins</th><th>Jamaat</th></tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Fajar</td>
-                <td class="${sehriClass}">${today.fajarBegins}</td>
-                <td>
-                  <span class="fajarJamaat">${today.fajarJamaat}</span>
-                  <span class="unofficial">${today.unofficial}</span>
-                </td>
-              </tr>
-              <tr>
-                <td>Sunrise</td>
-                <td colspan=2
-                    data-text="${ishraq}"
-                    class="ishraq"
-                >
-                  ${today.sunrise}
-                </td>
-              </tr>
-              <tr>
-                <td>Zuhr</td>
-                <td>${today.dhurBegins}</td>
-                <td class="${dhuhurClass}">${today.dhurJamaat}</td>
-              </tr>
-              <tr>
-                <td>Asar</td>
-                <td>${today.asarBegins}</td>
-                <td class="${asarClass}">${today.asarJamaat}</td>
-              </tr>
-              <tr>
-                <td>Maghrib</td>
-                <td colspan=2 class="${maghribClass}">${today.maghribBegins}</td>
-              </tr>
-              <tr>
-                <td>Isha</td>
-                <td>${today.ishaBegins}</td>
-                <td class="${ishaClass}">${today.ishaJamaat}</td></tr>
-              <tr>
-                <td>1st Jumah</td><td colspan=2>12:30</td>
-              </tr>
-              <tr>
-                <td>2nd Jumah</td><td colspan=2>13:15</td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="legend shine ${legendClass}">• <span>Changing tomorrow</span></div>
+<div class="date english">${todaysDateStr}</div>
+<div class="date islamic">${islamicDateStr}</div>
+<table class="table">
+  <thead>
+    <tr><th>Salah</th><th>Begins</th><th>Jamaat</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Fajar</td>
+      <td class="${sehriClass}">${today.fajarBegins}</td>
+      <td>
+        <span class="fajarJamaat">${today.fajarJamaat}</span>
+        <span class="unofficial">${today.unofficial}</span>
+      </td>
+    </tr>
+    <tr>
+      <td>Sunrise</td>
+      <td colspan=2
+          data-text="${ishraq}"
+          class="ishraq"
+      >
+        ${today.sunrise}
+      </td>
+    </tr>
+    <tr>
+      <td>${today.day === "Fri" ? "Jumah" : "Zuhr"}</td>
+      <td>${today.dhurBegins}</td>
+      <td class="${dhuhurClass}">${
+            today.day === "Fri" ? today.firstJumah + " / " + today.secondJumah : today.dhurJamaat
+          }</td>
+    </tr>
+    <tr>
+      <td>Asar</td>
+      <td>${today.asarBegins}</td>
+      <td class="${asarClass}">${today.asarJamaat}</td>
+    </tr>
+    <tr>
+      <td>Maghrib</td>
+      <td colspan=2 class="${maghribClass}">${today.maghribBegins}</td>
+    </tr>
+    <tr>
+      <td>Isha</td>
+      <td>${today.ishaBegins}</td>
+      <td class="${ishaClass}">${today.ishaJamaat}</td></tr>
+    <tr>
+      <td>1st Jumah</td><td colspan=2>${today.firstJumah}</td>
+    </tr>
+    <tr>
+      <td>2nd Jumah</td><td colspan=2>${today.secondJumah}</td>
+    </tr>
+  </tbody>
+</table>
+<div class="legend shine ${legendClass}">• <span>Changing tomorrow</span></div>
           `;
           const table_div = document.getElementById("table_div");
           table_div.innerHTML = table;
@@ -399,9 +386,7 @@
           }
         }
 
-        const storedData = JSON.parse(
-          window.localStorage.getItem("todays-times")
-        );
+        const storedData = JSON.parse(window.localStorage.getItem("todays-times"));
         const dateString = dateToday.toLocaleDateString();
         if (storedData && storedData.dateString) {
           drawData(storedData.data, dateString, true);
