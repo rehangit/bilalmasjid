@@ -191,8 +191,8 @@
   </head>
   <body>
     <script type="text/javascript">
+      const dateToday = new Date();
       window.onload = () => {
-        const dateToday = new Date();
         const index = dateToday.getDate() + 1;
         const range = `A${index}:P${index + 1}`;
 
@@ -279,7 +279,6 @@
         };
 
         function drawData(data, dateString, cached) {
-          console.log({ dateString, cached, dateToday });
           var today = getRowData(data[0]);
           var tomorrow = getRowData(data[1] || data[0]);
           var ishraq = formatTime(today.sunrise, 0, 15);
