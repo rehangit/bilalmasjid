@@ -1,44 +1,5 @@
 <html>
-  <head> </head>
-  <body>
-    <script type="text/javascript">
-      window.onload = async () => {
-        var [headers, rows] = await fetch(
-          "https://sheets.googleapis.com/v4/spreadsheets/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/values/calc-formatted!A:O?key=AIzaSyCq_9F8lfiTeXuj0RoPTrOg0NufmVf6qts"
-        )
-          .then(res => res.json())
-          .then(json => [json.values[0], json.values.slice(1)]);
-
-        function insertCell(value, td = "td", i) {
-          if (i !== 11 && i !== 14) {
-            const [hh, mm] = value.split(":");
-            if (i > 5 && mm) {
-              const h = Number(hh);
-              if (h < 12) value = h + 12 + ":" + mm;
-            }
-            return `<${td}>${value}</${td}>`;
-          }
-          return "";
-        }
-
-        function insertRow(row, className = "", td) {
-          return `<tr class='${className}'>${row
-            .map((c, i) => insertCell(c, td, i))
-            .join("")}</tr>`;
-        }
-
-        const today = new Date().getDate();
-        document.getElementById("prayer_times").innerHTML = `
-          <table class='table'>
-            <thead>${insertRow(headers, "headerRow", "th")}</thead>
-            <tbody>${rows
-              .map(row => insertRow(row, row[0] == today ? "selectedTableRow" : ""))
-              .join("")}</tbody>
-          </table>
-        `;
-      };
-    </script>
-
+  <head>
     <style>
       body {
         margin: 0;
@@ -55,8 +16,13 @@
         border-collapse: collapse;
         margin: auto;
       }
+
+      .friday {
+        background-color: LIGHTCYAN;
+        font-weight: bold;
+      }
       .selectedTableRow {
-        background-color: slategray;
+        background-color: cadetblue;
         color: whitesmoke;
       }
       td,
@@ -90,6 +56,50 @@
         top: 0;
       }
     </style>
+  </head>
+  <body>
+    <script type="text/javascript">
+      window.onload = async () => {
+        var [headers, rows] = await fetch(
+          "https://sheets.googleapis.com/v4/spreadsheets/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/values/calc-formatted!A:O?key=AIzaSyCq_9F8lfiTeXuj0RoPTrOg0NufmVf6qts"
+        )
+          .then(res => res.json())
+          .then(json => [json.values[0], json.values.slice(1)]);
+
+        function insertCell(value, td = "td", i) {
+          if (i !== 11 && i !== 14) {
+            const [hh, mm] = value.split(":");
+            if (i > 6 && mm) {
+              const h = Number(hh);
+              if (h < 12) value = h + 12 + ":" + mm;
+            }
+            return `<${td}>${value}</${td}>`;
+          }
+          return "";
+        }
+
+        function insertRow(row, className = "", td) {
+          return `<tr class='${className}'>${row
+            .map((c, i) => insertCell(c, td, i))
+            .join("")}</tr>`;
+        }
+
+        const today = new Date().getDate();
+        document.getElementById("prayer_times").innerHTML = `
+          <table class='table'>
+            <thead>${insertRow(headers, "headerRow", "th")}</thead>
+            <tbody>${rows
+              .map(row => {
+                const classNames = [];
+                if (row[2] === "Fri") classNames.push("friday");
+                if (row[0] == today) classNames.push("selectedTableRow");
+                return insertRow(row, classNames.join(" "));
+              })
+              .join("")}</tbody>
+          </table>
+        `;
+      };
+    </script>
 
     <div id="prayer_times"></div>
   </body>
