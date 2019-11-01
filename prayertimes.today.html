@@ -191,8 +191,8 @@
   </head>
   <body>
     <script type="text/javascript">
-      const dateToday = new Date();
       window.onload = () => {
+        const dateToday = new Date();
         const index = dateToday.getDate() + 1;
         const range = `A${index}:P${index + 1}`;
 
@@ -204,7 +204,7 @@
 
         function formatTime(time, incH = 0, incM = 0) {
           var split = time.replace(/[^ -~]/g, "").split(/[\:\s]/);
-          var t = dateToday;
+          var t = new Date(dateToday);
           t.setHours(Number(split[0]) + incH);
           t.setMinutes(Number(split[1]) + incM);
           return t.toLocaleTimeString("en-GB", timeOptions).replace(/[^ -~]/g, "");
@@ -231,7 +231,7 @@
           ] = row.map((val, i) => {
             var [hh, mm] = val.split(":");
             if (mm) {
-              const t = dateToday;
+              const t = new Date(dateToday);
               const h = Number(hh);
               //t.setHours(i > 5 && i < row.length - 1 && h < 12 ? h + 12 : hh);
               t.setHours(hh);
@@ -279,10 +279,11 @@
         };
 
         function drawData(data, dateString, cached) {
+          console.log({ dateString, cached, dateToday });
           var today = getRowData(data[0]);
           var tomorrow = getRowData(data[1] || data[0]);
           var ishraq = formatTime(today.sunrise, 0, 15);
-          var todaysDateStr = `${(dateString ? new Date(dateString) : dateToday).toLocaleDateString(
+          var todaysDateStr = `${new Date(dateString ? dateString : dateToday).toLocaleDateString(
             "en-GB",
             {
               day: "numeric",
@@ -315,7 +316,7 @@
 
           // highlight which jamaat time it is now
           var [sehriClass, dhuhurClass, asarClass, maghribClass, ishaClass] = [
-            calcStyles(today.fajarBegins, today.fajarBegins, 30, 0),
+            calcStyles(today.fajarBegins, today.fajarJamaat, 30, 0),
             calcStyles(today.dhurBegins, today.dhurJamaat, 0, 10),
             calcStyles(today.asarBegins, today.asarJamaat, 0, 10, tomorrow.asarJamaat),
             calcStyles(today.maghribBegins, today.maghribBegins, 10, 10),
@@ -323,7 +324,6 @@
           ];
           var legendClass =
             asarClass.includes("changing") || ishaClass.includes("changing") ? "visible" : "";
-          console.log({ today });
           var table = `
 <div class="date english">${todaysDateStr}</div>
 <div class="date islamic">${islamicDateStr}</div>
