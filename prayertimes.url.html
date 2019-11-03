@@ -1,6 +1,9 @@
 <html>
   <head>
     <style>
+      h2 {
+        text-align: center;
+      }
       body {
         margin: 0;
         font-family: Lato, "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans",
@@ -60,11 +63,16 @@
   <body>
     <script type="text/javascript">
       window.onload = async () => {
-        var [headers, rows] = await fetch(
+        var [month, headers, rows] = await fetch(
           "https://sheets.googleapis.com/v4/spreadsheets/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/values/calc-formatted!A:O?key=AIzaSyCq_9F8lfiTeXuj0RoPTrOg0NufmVf6qts"
         )
           .then(res => res.json())
-          .then(json => [json.values[0], json.values.slice(1)]);
+          .then(json => {
+            const headers = json.values[0];
+            const month = headers[0];
+            headers[0] = "Date";
+            return [month, headers, json.values.slice(1)];
+          });
 
         function insertCell(value, td = "td", i) {
           if (i !== 11 && i !== 14) {
@@ -86,6 +94,7 @@
 
         const today = new Date().getDate();
         document.getElementById("prayer_times").innerHTML = `
+          <h2>${month}</h2>
           <table class='table'>
             <thead>${insertRow(headers, "headerRow", "th")}</thead>
             <tbody>${rows
