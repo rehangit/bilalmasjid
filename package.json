@@ -1,0 +1,37 @@
+{
+  "name": "vanilla-website",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev:assets": "webpack --watch",
+    "dev:start": "live-server --open=./public/prayertimes.today.html --host=localhost --watch=./public/",
+    "dev": "npm-run-all -p dev:*",
+    "build": "cross-env NODE_ENV=production webpack"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "babel-loader": "^8.0.6",
+    "cross-env": "^6.0.3",
+    "css-loader": "^3.4.2",
+    "cssnano": "^4.1.10",
+    "file-loader": "^5.0.2",
+    "live-server": "^1.2.1",
+    "mini-css-extract-plugin": "^0.9.0",
+    "node-sass": "^4.13.0",
+    "npm-run-all": "^4.1.5",
+    "postcss-loader": "^3.0.0",
+    "postcss-preset-env": "^6.7.0",
+    "sass-loader": "^8.0.1",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
+  },
+  "dependencies": {
+    "@babel/plugin-transform-runtime": "^7.7.6",
+    "@babel/polyfill": "^7.7.0",
+    "@babel/runtime": "^7.7.7",
+    "es6-promise": "^4.2.8",
+    "whatwg-fetch": "^3.0.0"
+  }
+}
