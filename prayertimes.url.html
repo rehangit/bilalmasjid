@@ -20,19 +20,15 @@
         margin: auto;
       }
 
-      .friday {
-        background-color: LIGHTCYAN;
-        font-weight: bold;
+      .table th,
+      .table td {
+        padding: 4px 6px;
       }
-      .selectedTableRow {
-        background-color: cadetblue;
-        color: whitesmoke;
-      }
+
       td,
       th {
         text-align: center;
-        border: 0.25px rgba(128, 128, 128, 0.5) solid;
-        padding: 4px 4px;
+        border: 0.25px rgba(0, 128, 128, 0.3) solid;
         font-size: inherit;
       }
       th:first-child,
@@ -40,16 +36,20 @@
         text-align: left;
       }
 
-      @media only screen and (max-width: 600px) {
-        td,
-        th {
-          font-size: small;
-          padding: 2px 2px;
-        }
+      .friday {
+        background-color: #98cde2;
+        font-weight: bold;
+      }
+      .selectedTableRow {
+        background-color: gold;
+      }
+
+      .selectedTableRow td {
+        border-color: goldenrod;
       }
 
       .table thead th {
-        background-color: darkolivegreen;
+        background-color: darkcyan;
         color: white;
       }
       .table thead,
@@ -57,6 +57,22 @@
         position: sticky;
         position: -webkit-sticky;
         top: 0;
+      }
+
+      .table thead th:nth-child(2),
+      .table td:nth-child(2) {
+        width: 60px;
+      }
+
+      @media only screen and (max-width: 600px) {
+        td,
+        th {
+          font-size: small;
+        }
+        .table th,
+        .table td {
+          padding: 2px 2px;
+        }
       }
     </style>
   </head>
@@ -74,27 +90,23 @@
             return [month, headers, json.values.slice(1)];
           });
 
-        function insertCell(value, td = "td", i) {
-          if (i !== 11 && i !== 14) {
-            const [hh, mm] = value.split(":");
-            if (i > 6 && mm) {
-              const h = Number(hh);
-              if (h < 12) value = h + 12 + ":" + mm;
-            }
-            return `<${td}>${value}</${td}>`;
-          }
-          return "";
+        function insertCell(value, td = "td") {
+          const [hh, mm] = value.split(":");
+          return `<${td}>${value}</${td}>`;
         }
 
         function insertRow(row, className = "", td) {
+          row.splice(11, 1);
           return `<tr class='${className}'>${row
-            .map((c, i) => insertCell(c, td, i))
+            .slice(0, 13)
+            .map(c => insertCell(c, td))
             .join("")}</tr>`;
         }
 
         const today = new Date().getDate();
+        const year = new Date().getFullYear();
         document.getElementById("prayer_times").innerHTML = `
-          <h2>${month}</h2>
+          <h2>${month} ${year}</h2>
           <table class='table'>
             <thead>${insertRow(headers, "headerRow", "th")}</thead>
             <tbody>${rows
