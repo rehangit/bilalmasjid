@@ -164,28 +164,28 @@ window.onload = () => {
     <tr>
       <td>${today.day === "Fri" ? "Jumah" : "Zuhr"}</td>
       <td>${today.dhurBegins}</td>
-      <td class="${dhuhurClass}">${
+      <td class="dhuhur ${dhuhurClass}">${
       today.day === "Fri" ? today.firstJumah + " / " + today.secondJumah : today.dhurJamaat
     }</td>
     </tr>
     <tr>
       <td>Asar</td>
       <td>${today.asarBegins}</td>
-      <td class="${asarClass}">${today.asarJamaat}</td>
+      <td class="asar ${asarClass}">${today.asarJamaat}</td>
     </tr>
     <tr>
       <td>Maghrib</td>
-      <td colspan=2 class="${maghribClass}">${today.maghribBegins}</td>
+      <td colspan=2 class="maghrib ${maghribClass}">${today.maghribBegins}</td>
     </tr>
     <tr>
       <td>Isha</td>
       <td>${today.ishaBegins}</td>
-      <td class="${ishaClass}">${today.ishaJamaat}</td></tr>
+      <td class="isha ${ishaClass}">${today.ishaJamaat}</td></tr>
     <tr>
-      <td>1st Jumah</td><td colspan=2>${today.firstJumah}</td>
+      <td>1st Jumah</td><td class="firstJumah" colspan=2>${today.firstJumah}</td>
     </tr>
     <tr>
-      <td>2nd Jumah</td><td colspan=2>${today.secondJumah}</td>
+      <td>2nd Jumah</td><td class="secondJumah" colspan=2>${today.secondJumah}</td>
     </tr>
   </tbody>
 </table>

@@ -184,3 +184,12 @@ body {
 
   animation: shimmer 1s linear forwards infinite;
 }
+.fajarJamaat,
+.dhuhur,
+.asar,
+.isha,
+.firstJumah,
+.secondJumah {
+  opacity: 0.1;
+  color: white;
+}
