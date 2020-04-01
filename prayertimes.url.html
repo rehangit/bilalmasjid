@@ -64,6 +64,10 @@
         width: 60px;
       }
 
+      .table td.jamaat {
+        opacity: 0.3;
+      }
+
       @media only screen and (max-width: 600px) {
         td,
         th {
@@ -90,16 +94,16 @@
             return [month, headers, json.values.slice(1)];
           });
 
-        function insertCell(value, td = "td") {
-          const [hh, mm] = value.split(":");
-          return `<${td}>${value}</${td}>`;
+        function insertCell(value, col, td = "td") {
+          const className = headers[col].toLowerCase().includes("iqamah") ? "jamaat" : "";
+          return `<${td} class="${className}">${value}</${td}>`;
         }
 
         function insertRow(row, className = "", td) {
           row.splice(11, 1);
           return `<tr class='${className}'>${row
             .slice(0, 13)
-            .map(c => insertCell(c, td))
+            .map((cell, col) => insertCell(cell, col, td))
             .join("")}</tr>`;
         }
 
@@ -118,6 +122,7 @@
               })
               .join("")}</tbody>
           </table>
+          <h4>Note: Use the jamaat times to establish your salah with jamaat at home during lock down. There is no jamaat at the Masjid for the time being.</h4>
         `;
       };
     </script>
