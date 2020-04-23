@@ -1,7 +1,5 @@
 import "@babel/polyfill";
 import "whatwg-fetch";
-// import { polyfill } from "es6-promise";
-// polyfill();
 
 const dateToday = new Date();
 window.onload = () => {
@@ -11,19 +9,19 @@ window.onload = () => {
   const timeOptions = {
     hour12: false,
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
   };
 
   function formatTime(time, incH = 0, incM = 0) {
-    var split = time.replace(/[^ -~]/g, "").split(/[\:\s]/);
-    var t = new Date(dateToday);
+    const split = time.replace(/[^ -~]/g, "").split(/[\:\s]/);
+    const t = new Date(dateToday);
     t.setHours(Number(split[0]) + incH);
     t.setMinutes(Number(split[1]) + incM);
     return t.toLocaleTimeString("en-GB", timeOptions).replace(/[^ -~]/g, "");
   }
 
-  var getRowData = row => {
-    var [
+  const getRowData = (row) => {
+    const [
       date,
       islamicDate,
       day,
@@ -39,9 +37,9 @@ window.onload = () => {
       ishaBegins,
       ishaJamaat,
       islamicMonthNumber,
-      unofficial
+      unofficial,
     ] = row.map((val, i) => {
-      var [hh, mm] = val.split(":");
+      const [hh, mm] = val.split(":");
       if (mm) {
         const t = new Date(dateToday);
         const h = Number(hh);
@@ -64,7 +62,7 @@ window.onload = () => {
       "Ramadhan",
       "Shawwal",
       "Dhul-Qa‘dah",
-      "Dhul-Hijjah"
+      "Dhul-Hijjah",
     ];
     const islamicMonth = islamicMonthNames[islamicMonthNumber - 1];
 
@@ -86,27 +84,29 @@ window.onload = () => {
       islamicMonth,
       unofficial,
       firstJumah: "13:00",
-      secondJumah: "13:30"
+      secondJumah: "13:30",
     };
   };
 
-  function drawData(data, dateString, cached) {
-    var today = getRowData(data[0]);
-    var tomorrow = getRowData(data[1] || data[0]);
-    var ishraq = formatTime(today.sunrise, 0, 15);
-    var todaysDateStr = `${new Date(dateString ? dateString : dateToday).toLocaleDateString(
-      "en-GB",
-      {
-        day: "numeric",
-        year: "numeric",
-        month: "long",
-        hour: "2-digit",
-        minute: "2-digit"
-      }
-    )}`;
+  function drawData({ data, dateString }, valid) {
+    //console.log(data, dateString, valid);
+    const today = getRowData(data[0]);
+    const tomorrow = getRowData(data[1] || data[0]);
+    const ishraq = formatTime(today.sunrise, 0, 15);
 
-    var islamicDateStr = `${today.islamicDate} ${today.islamicMonth} 1440 Hj`;
-    var timeToMins = t => {
+    const todaysDateStr = `${new Date(
+      valid ? new Date().toISOString() : dateString
+    ).toLocaleDateString("en-GB", {
+      day: "numeric",
+      year: "numeric",
+      month: "long",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    })}`;
+
+    const islamicDateStr = `${today.islamicDate} ${today.islamicMonth} 1440 Hj`;
+    const timeToMins = (t) => {
       const [h, m] = t
         .replace(/[^ -~]/g, "")
         .split(":")
@@ -114,29 +114,29 @@ window.onload = () => {
       return h * 60 + m;
     };
 
-    var calcStyles = (begins, jamaat, before = 0, after = 0, next) => {
+    const calcStyles = (begins, jamaat, before = 0, after = 0, next) => {
       const style = [];
-      var now = timeToMins(dateToday.toLocaleTimeString("en-GB", timeOptions).slice(0, 5));
-      var from = timeToMins(begins) - before;
-      var jamaatTime = timeToMins(jamaat);
-      var to = jamaatTime + after;
+      const now = timeToMins(new Date().toLocaleTimeString("en-GB", timeOptions).slice(0, 5));
+      const from = timeToMins(begins) - before;
+      const jamaatTime = timeToMins(jamaat);
+      const to = jamaatTime + after;
       style.push(from <= now && now < to ? "highlight" : "");
       if (next && jamaatTime !== timeToMins(next)) style.push("changing");
       return style.join(" ");
     };
 
     // highlight which jamaat time it is now
-    var [sehriClass, dhuhurClass, asarClass, maghribClass, ishaClass] = [
+    const [sehriClass, dhuhurClass, asarClass, maghribClass, ishaClass] = [
       calcStyles(today.fajarBegins, today.fajarJamaat, 30, 0),
       calcStyles(today.dhurBegins, today.dhurJamaat, 0, 10),
       calcStyles(today.asarBegins, today.asarJamaat, 0, 10, tomorrow.asarJamaat),
       calcStyles(today.maghribBegins, today.maghribBegins, 10, 10),
-      calcStyles(today.ishaBegins, today.ishaJamaat, 0, 10, tomorrow.ishaJamaat)
+      calcStyles(today.ishaBegins, today.ishaJamaat, 0, 10, tomorrow.ishaJamaat),
     ];
-    var legendClass =
+    const legendClass =
       asarClass.includes("changing") || ishaClass.includes("changing") ? "visible" : "";
 
-    var table = `
+    const table = `
 <div class="date english">${todaysDateStr}</div>
 <div class="date islamic">${islamicDateStr}</div>
 <table class="table">
@@ -192,34 +192,41 @@ window.onload = () => {
 <div class="legend shine ${legendClass}">• <span>Changing tomorrow</span></div>
           `;
     const table_div = document.getElementById("table_div");
-    console.log("table html calculated:", table);
+    // console.log("table html calculated:", table);
     table_div.innerHTML = table;
-    if (!cached) {
-      document.querySelector(".shine").classList.remove("shine");
-    }
+
+    if (valid) document.querySelector(".shine").classList.remove("shine");
   }
 
-  const storedData = JSON.parse(window.localStorage.getItem("todays-times"));
-  const dateString = dateToday.toLocaleDateString();
-  if (storedData && storedData.dateString) {
-    drawData(storedData.data, dateString, true);
-  }
+  let stored = JSON.parse(window.localStorage.getItem("todays-times"));
+  const isValid = () =>
+    stored && new Date().toISOString().slice(0, 17) === stored.dateString.slice(0, 17);
 
-  console.log("about to fetch");
-  fetch(
-    `https://script.google.com/a/macros/bilalmasjid.co.uk/s/AKfycbx32N0Mu6rh15Jj_WULEwdxGY7NKpzm7PTg8NpYy8dW-Iz5VIr9/exec?name=calc-formatted&range=${range}`
-  )
-    .then(res => res.json())
-    .then(data => {
-      console.log("data fetched:", data);
-      drawData(data);
-      window.localStorage.setItem(
-        "todays-times",
-        JSON.stringify({
-          data,
-          dateString
-        })
-      );
-      window.setInterval(() => drawData(data), 1000 * 30);
-    });
+  const params = new URL(document.location).searchParams;
+  const sheetId = params.get("id") || "1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8";
+  const sheetName = params.get("name") || "calc-formatted";
+  const key = params.get("key") || "AIzaSyCq_9F8lfiTeXuj0RoPTrOg0NufmVf6qts";
+
+  const urlToFetch = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}!${range}?key=${key}`;
+  // console.log({ urlToFetch });
+
+  const fetchFreshDataAndUpdate = () =>
+    fetch(urlToFetch)
+      .then((res) => res.json())
+      .then((res) => {
+        // console.log({ res });
+        const data = res.values;
+        const dateString = new Date().toISOString();
+        stored = { data, dateString };
+        window.localStorage.setItem("todays-times", JSON.stringify(stored));
+      })
+      .catch(console.log);
+
+  const render = () => {
+    const valid = isValid();
+    stored && stored.data && drawData(stored, valid);
+    if (!valid) fetchFreshDataAndUpdate().then(() => drawData(stored, true));
+  };
+  render();
+  window.setInterval(render, 1000);
 };

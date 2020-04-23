@@ -86,8 +86,8 @@
         var [month, headers, rows] = await fetch(
           "https://sheets.googleapis.com/v4/spreadsheets/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/values/calc-formatted!A:O?key=AIzaSyCq_9F8lfiTeXuj0RoPTrOg0NufmVf6qts"
         )
-          .then(res => res.json())
-          .then(json => {
+          .then((res) => res.json())
+          .then((json) => {
             const headers = json.values[0];
             const month = headers[0];
             headers[0] = "Date";
@@ -114,7 +114,7 @@
           <table class='table'>
             <thead>${insertRow(headers, "headerRow", "th")}</thead>
             <tbody>${rows
-              .map(row => {
+              .map((row) => {
                 const classNames = [];
                 if (row[2] === "Fri") classNames.push("friday");
                 if (row[0] == today) classNames.push("selectedTableRow");
