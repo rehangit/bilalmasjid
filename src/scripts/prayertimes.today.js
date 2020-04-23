@@ -1,10 +1,23 @@
 import "@babel/polyfill";
 import "whatwg-fetch";
 
-const dateToday = new Date();
 window.onload = () => {
+  const dateToday = new Date();
   const index = dateToday.getDate() + 1;
   const range = `A${index}:P${index + 1}`;
+
+  const log = window.localStorage.getItem("debug") === "true" ? console.log : () => {};
+
+  // poll frequency: download data from server with this frequency
+  // 8 - 11 = once a day
+  // 12 = twice a day
+  // 13 = every hour
+  // 14 = every half an hour
+  // 15 = every 10 minute
+  // 16 = every minute
+  // 18 = every 10 secs
+  // 19 = every 1 secs
+  const frequency = parseInt(window.localStorage.getItem("frequency") || "12", 10);
 
   const timeOptions = {
     hour12: false,
@@ -43,7 +56,6 @@ window.onload = () => {
       if (mm) {
         const t = new Date(dateToday);
         const h = Number(hh);
-        //t.setHours(i > 5 && i < row.length - 1 && h < 12 ? h + 12 : hh);
         t.setHours(hh);
         t.setMinutes(mm);
         val = t.toLocaleTimeString("en-GB", timeOptions);
@@ -89,7 +101,7 @@ window.onload = () => {
   };
 
   function drawData({ data, dateString }, valid) {
-    //console.log(data, dateString, valid);
+    log(data, dateString, valid);
     const today = getRowData(data[0]);
     const tomorrow = getRowData(data[1] || data[0]);
     const ishraq = formatTime(today.sunrise, 0, 15);
@@ -192,7 +204,7 @@ window.onload = () => {
 <div class="legend shine ${legendClass}">• <span>Changing tomorrow</span></div>
           `;
     const table_div = document.getElementById("table_div");
-    // console.log("table html calculated:", table);
+    //log("table html calculated:", table);
     table_div.innerHTML = table;
 
     if (valid) document.querySelector(".shine").classList.remove("shine");
@@ -200,7 +212,8 @@ window.onload = () => {
 
   let stored = JSON.parse(window.localStorage.getItem("todays-times"));
   const isValid = () =>
-    stored && new Date().toISOString().slice(0, 17) === stored.dateString.slice(0, 17);
+    stored &&
+    new Date().toISOString().slice(0, frequency) === stored.dateString.slice(0, frequency);
 
   const params = new URL(document.location).searchParams;
   const sheetId = params.get("id") || "1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8";
@@ -208,19 +221,19 @@ window.onload = () => {
   const key = params.get("key") || "AIzaSyCq_9F8lfiTeXuj0RoPTrOg0NufmVf6qts";
 
   const urlToFetch = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}!${range}?key=${key}`;
-  // console.log({ urlToFetch });
+  log({ urlToFetch });
 
   const fetchFreshDataAndUpdate = () =>
     fetch(urlToFetch)
       .then((res) => res.json())
       .then((res) => {
-        // console.log({ res });
+        log({ res });
         const data = res.values;
         const dateString = new Date().toISOString();
         stored = { data, dateString };
         window.localStorage.setItem("todays-times", JSON.stringify(stored));
       })
-      .catch(console.log);
+      .catch(log);
 
   const render = () => {
     const valid = isValid();
