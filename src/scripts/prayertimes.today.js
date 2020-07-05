@@ -1,6 +1,8 @@
 import "@babel/polyfill";
 import "whatwg-fetch";
 
+import "../styles/prayertimes.today.css";
+
 window.onload = () => {
   const dateToday = new Date();
   const index = dateToday.getDate() + 1;
@@ -95,8 +97,8 @@ window.onload = () => {
       ishaJamaat,
       islamicMonth,
       unofficial,
-      firstJumah: "13:00",
-      secondJumah: "13:30",
+      firstJumah: "13:20",
+      secondJumah: "13:50",
     };
   };
 

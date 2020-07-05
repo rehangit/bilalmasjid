@@ -22,7 +22,7 @@
 
       .table th,
       .table td {
-        padding: 4px 6px;
+        padding: 6px;
       }
 
       td,
@@ -64,8 +64,21 @@
         width: 60px;
       }
 
-      .table td.jamaat {
+      .table td.iqamah {
         opacity: 0.3;
+      }
+
+      .table td.dhuhr.iqamah {
+        opacity: 1;
+      }
+
+      .table th.fajr.iqamah,
+      .table td.fajr.iqamah {
+        display: none;
+      }
+
+      .col-date {
+        color: red;
       }
 
       @media only screen and (max-width: 600px) {
@@ -75,7 +88,7 @@
         }
         .table th,
         .table td {
-          padding: 2px 2px;
+          padding: 2px;
         }
       }
     </style>
@@ -95,8 +108,8 @@
           });
 
         function insertCell(value, col, td = "td") {
-          const className = headers[col].toLowerCase().includes("iqamah") ? "jamaat" : "";
-          return `<${td} class="${className}">${value}</${td}>`;
+          const classNames = headers[col].toLowerCase();
+          return `<${td} class="${classNames}">${value}</${td}>`;
         }
 
         function insertRow(row, className = "", td) {
@@ -112,6 +125,9 @@
         document.getElementById("prayer_times").innerHTML = `
           <h2>${month} ${year}</h2>
           <table class='table'>
+            <colgroup>
+              <col class='col-date'>
+            </colgroup>
             <thead>${insertRow(headers, "headerRow", "th")}</thead>
             <tbody>${rows
               .map((row) => {
@@ -122,7 +138,7 @@
               })
               .join("")}</tbody>
           </table>
-          <h4>Note: Use the jamaat times to establish your salah with jamaat at home during lock down. There is no jamaat at the Masjid for the time being.</h4>
+
         `;
       };
     </script>
