@@ -4,7 +4,7 @@
   "main": "src/index.js",
   "license": "MIT",
   "scripts": {
-    "start": "parcel src/prayertimes.today.html",
+    "start": "parcel src/prayertimes.today.html --out-dir public --public-url ./",
     "build": "parcel build src/prayertimes.today.html --out-dir public --public-url ./"
   },
   "devDependencies": {
