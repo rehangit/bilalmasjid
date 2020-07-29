@@ -185,7 +185,6 @@ body {
   animation: shimmer 1s linear forwards infinite;
 }
 
-.fajarJamaat,
-.isha {
+.fajarJamaat {
   opacity: 0;
 }

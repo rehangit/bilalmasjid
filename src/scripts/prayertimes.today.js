@@ -194,7 +194,8 @@ window.onload = () => {
     <tr>
       <td>Isha</td>
       <td>${today.ishaBegins}</td>
-      <td class="isha ${ishaClass}">${today.ishaJamaat}</td></tr>
+      <td class="isha ${ishaClass}">${today.ishaJamaat}</td>
+    </tr>
     <tr>
       <td>1st Jumah</td><td class="firstJumah" colspan=2>${today.firstJumah}</td>
     </tr>
@@ -245,5 +246,5 @@ window.onload = () => {
     if (!valid) fetchFreshDataAndUpdate().then(() => drawData(stored, true));
   };
   render();
-  window.setInterval(render, 1000);
+  // window.setInterval(render, 1000);
 };
