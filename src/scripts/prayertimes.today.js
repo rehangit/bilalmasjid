@@ -1,6 +1,3 @@
-import "@babel/polyfill";
-import "whatwg-fetch";
-
 import "../styles/prayertimes.today.css";
 
 window.onload = () => {
