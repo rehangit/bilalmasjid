@@ -37,15 +37,19 @@
       }
 
       .friday {
-        background-color: #98cde2;
+        background-color: lightgreen;
         font-weight: bold;
       }
-      .selectedTableRow {
+      .selected {
         background-color: gold;
       }
 
-      .selectedTableRow td {
+      .selected td {
         border-color: goldenrod;
+      }
+
+      .summertime {
+        background-color: lightgray;
       }
 
       .table thead th {
@@ -65,17 +69,11 @@
       }
 
       .table td.iqamah {
-        opacity: 0.3;
-      }
-
-      .table td.dhuhr.iqamah,
-      .table td.asr.iqamah {
         opacity: 1;
       }
-
-      .table th.fajr.iqamah,
-      .table td.fajr.iqamah {
-        display: none;
+      .table td.iqamah.changed {
+        color: red;
+        font-weight: bold;
       }
 
       .col-date {
@@ -108,16 +106,19 @@
             return [month, headers, json.values.slice(1)];
           });
 
-        function insertCell(value, col, td = "td") {
+        function insertCell(value, prevValue, col, td = "td") {
           const classNames = headers[col].toLowerCase();
-          return `<${td} class="${classNames}">${value}</${td}>`;
+          const changed = classNames.includes("iqamah") && prevValue !== value ? "changed" : "";
+          return `<${td} class="${classNames} ${changed}">${value}</${td}>`;
         }
 
-        function insertRow(row, className = "", td) {
+        function insertRow(row, prevRow, className = "", td) {
           row.splice(11, 1);
           return `<tr class='${className}'>${row
             .slice(0, 13)
-            .map((cell, col) => insertCell(cell, col, td))
+            .map((cell, col) => {
+              return insertCell(cell, prevRow && prevRow[col], col, td);
+            })
             .join("")}</tr>`;
         }
 
@@ -129,13 +130,16 @@
             <colgroup>
               <col class='col-date'>
             </colgroup>
-            <thead>${insertRow(headers, "headerRow", "th")}</thead>
+            <thead>${insertRow(headers, null, "headerRow", "th")}</thead>
             <tbody>${rows
-              .map((row) => {
+              .map((row, r) => {
                 const classNames = [];
                 if (row[2] === "Fri") classNames.push("friday");
-                if (row[0] == today) classNames.push("selectedTableRow");
-                return insertRow(row, classNames.join(" "));
+                if (row[2] === "Sun" && row[0] > 24 && (month === "October" || month === "Marchh"))
+                  classNames.push("summertime");
+                if (row[0] == today) classNames.push("selected");
+                const prevRow = rows[r > 0 ? r - 1 : 0];
+                return insertRow(row, prevRow, classNames.join(" "));
               })
               .join("")}</tbody>
           </table>
