@@ -117,7 +117,9 @@ body {
 }
 .unofficial {
   opacity: 0;
+  display: none;
 }
+
 .unofficial:hover,
 .unofficial:active,
 .unofficial:focus,
@@ -186,5 +188,5 @@ body {
 }
 
 .fajarJamaat {
-  opacity: 0;
+  display: block;
 }
