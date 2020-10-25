@@ -94,8 +94,8 @@ window.onload = () => {
       ishaJamaat,
       islamicMonth,
       unofficial,
-      firstJumah: "13:20",
-      secondJumah: "13:50",
+      firstJumah: "12:15",
+      secondJumah: "12:45",
     };
   };
 
@@ -243,5 +243,5 @@ window.onload = () => {
     if (!valid) fetchFreshDataAndUpdate().then(() => drawData(stored, true));
   };
   render();
-  // window.setInterval(render, 1000);
+  window.setInterval(render, 1000);
 };
