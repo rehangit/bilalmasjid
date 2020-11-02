@@ -75,8 +75,7 @@ tbody {
 }
 body {
   margin: 0;
-  font-family: Lato, "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans",
-    sans-serif;
+  font-family: Lato, "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", sans-serif;
   font-size: 10pt;
 }
 .ishraq::after {
@@ -87,7 +86,7 @@ body {
 }
 .highlight {
   background-color: yellow;
-  animation: color_change 1s infinite alternate;
+  animation: color_change 0.5s linear infinite alternate;
 }
 .changing:after {
   content: "•";
@@ -98,7 +97,6 @@ body {
   text-align: left;
 }
 .legend {
-  display: none;
   background-color: var(--secondary);
   padding: 0 4px 4px;
   color: var(--secondary);

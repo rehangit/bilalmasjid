@@ -237,11 +237,25 @@ window.onload = () => {
       })
       .catch(log);
 
-  const render = () => {
-    const valid = isValid();
-    stored && stored.data && drawData(stored, valid);
-    if (!valid) fetchFreshDataAndUpdate().then(() => drawData(stored, true));
+  const update = () => {
+    fetchFreshDataAndUpdate().then(() => drawData(stored, true));
   };
-  render();
-  window.setInterval(render, 1000);
+
+  const renderTime = () => {
+    const tm = document.querySelector(".date.english");
+    if (tm)
+      tm.innerText = new Date().toLocaleDateString("en-GB", {
+        day: "numeric",
+        year: "numeric",
+        month: "long",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+  };
+
+  update();
+  renderTime();
+  window.setInterval(renderTime, 1000);
+  window.setInterval(update, 60000);
 };
