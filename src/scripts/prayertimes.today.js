@@ -176,7 +176,8 @@ window.onload = () => {
       <td>${today.day === "Fri" ? "Jumah" : "Zuhr"}</td>
       <td>${today.dhurBegins}</td>
       <td class="dhuhur ${dhuhurClass}">${
-      today.day === "Fri" ? today.firstJumah + " / " + today.secondJumah : today.dhurJamaat
+      // today.day === "Fri" ? today.firstJumah + " / " + today.secondJumah : today.dhurJamaat
+      today.dhurJamaat
     }</td>
     </tr>
     <tr>
@@ -194,10 +195,7 @@ window.onload = () => {
       <td class="isha ${ishaClass}">${today.ishaJamaat}</td>
     </tr>
     <tr>
-      <td>1st Jumah</td><td class="firstJumah" colspan=2>${today.firstJumah}</td>
-    </tr>
-    <tr>
-      <td>2nd Jumah</td><td class="secondJumah" colspan=2>${today.secondJumah}</td>
+      <td>Jumah</td><td class="firstJumah" colspan=2>...</td>
     </tr>
   </tbody>
 </table>
