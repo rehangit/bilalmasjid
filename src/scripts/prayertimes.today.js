@@ -159,7 +159,7 @@ window.onload = () => {
       <td>Fajar</td>
       <td class="${sehriClass}">${today.fajarBegins}</td>
       <td>
-        <span class="fajarJamaat">${today.fajarJamaat}</span>
+        <span class="fajar jamaat">${today.fajarJamaat}</span>
         <span class="unofficial">${today.unofficial}</span>
       </td>
     </tr>
@@ -175,7 +175,7 @@ window.onload = () => {
     <tr>
       <td>${today.day === "Fri" ? "Jumah" : "Zuhr"}</td>
       <td>${today.dhurBegins}</td>
-      <td class="dhuhur ${dhuhurClass}">${
+      <td class="dhuhur jamaat ${dhuhurClass}">${
       // today.day === "Fri" ? today.firstJumah + " / " + today.secondJumah : today.dhurJamaat
       today.dhurJamaat
     }</td>
@@ -183,7 +183,7 @@ window.onload = () => {
     <tr>
       <td>Asar</td>
       <td>${today.asarBegins}</td>
-      <td class="asar ${asarClass}">${today.asarJamaat}</td>
+      <td class="asar jamaat ${asarClass}">${today.asarJamaat}</td>
     </tr>
     <tr>
       <td>Maghrib</td>
@@ -192,7 +192,7 @@ window.onload = () => {
     <tr>
       <td>Isha</td>
       <td>${today.ishaBegins}</td>
-      <td class="isha ${ishaClass}">${today.ishaJamaat}</td>
+      <td class="isha jamaat highlight ${ishaClass}">${today.ishaJamaat}</td>
     </tr>
     <tr>
       <td>Jumah</td><td class="firstJumah" colspan=2>...</td>
