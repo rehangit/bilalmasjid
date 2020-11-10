@@ -192,7 +192,7 @@ window.onload = () => {
     <tr>
       <td>Isha</td>
       <td>${today.ishaBegins}</td>
-      <td class="isha jamaat highlight ${ishaClass}">${today.ishaJamaat}</td>
+      <td class="isha jamaat ${ishaClass}">${today.ishaJamaat}</td>
     </tr>
     <tr>
       <td>Jumah</td><td class="firstJumah" colspan=2>...</td>
