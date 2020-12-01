@@ -3,7 +3,7 @@ import "../styles/prayertimes.today.css";
 window.onload = () => {
   const dateToday = new Date();
   const index = dateToday.getDate() + 1;
-  const range = `A${index}:P${index + 1}`;
+  const range = `A${index}:R${index + 1}`;
 
   const log = window.localStorage.getItem("debug") === "true" ? console.log : () => {};
 
@@ -49,6 +49,8 @@ window.onload = () => {
       ishaBegins,
       ishaJamaat,
       islamicMonthNumber,
+      firstJumah = "12:30",
+      secondJumah = "13:10",
       unofficial,
     ] = row.map((val, i) => {
       const [hh, mm] = val.split(":");
@@ -65,14 +67,14 @@ window.onload = () => {
       "Muharram",
       "Safar",
       "Rabi al-Awwal",
-      "Rabi ath-Thānī",
+      "Rabi ath-Thani",
       "Jumadi ul-Ula",
       "Jumadi ul-Akhirah",
       "Rajab",
       "Sha‘ban",
       "Ramadhan",
       "Shawwal",
-      "Dhul-Qa‘dah",
+      "Dhul-Qadah",
       "Dhul-Hijjah",
     ];
     const islamicMonth = islamicMonthNames[islamicMonthNumber - 1];
@@ -94,8 +96,8 @@ window.onload = () => {
       ishaJamaat,
       islamicMonth,
       unofficial,
-      firstJumah: "12:15",
-      secondJumah: "12:45",
+      firstJumah,
+      secondJumah,
     };
   };
 
@@ -176,8 +178,7 @@ window.onload = () => {
       <td>${today.day === "Fri" ? "Jumah" : "Zuhr"}</td>
       <td>${today.dhurBegins}</td>
       <td class="dhuhur jamaat ${dhuhurClass}">${
-      // today.day === "Fri" ? today.firstJumah + " / " + today.secondJumah : today.dhurJamaat
-      today.dhurJamaat
+      today.day === "Fri" ? today.firstJumah + " / " + today.secondJumah : today.dhurJamaat
     }</td>
     </tr>
     <tr>
@@ -195,7 +196,10 @@ window.onload = () => {
       <td class="isha jamaat ${ishaClass}">${today.ishaJamaat}</td>
     </tr>
     <tr>
-      <td>Jumah</td><td class="firstJumah" colspan=2>...</td>
+      <td>Jumah</td>
+      <td class="jumah" colspan=2>
+        ${today.firstJumah} / ${today.secondJumah}
+      </td>
     </tr>
   </tbody>
 </table>

@@ -75,9 +75,6 @@
         color: red;
         font-weight: bold;
       }
-      .table .lockdown td.iqamah {
-        opacity: 0.1;
-      }
 
       .col-date {
         color: red;
@@ -97,7 +94,6 @@
   </head>
   <body>
     <script type="text/javascript">
-      const lockdownStart = new Date("2020-11-05");
       window.onload = async () => {
         var [month, headers, rows] = await fetch(
           "https://sheets.googleapis.com/v4/spreadsheets/1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8/values/calc-formatted!A:O?key=AIzaSyCq_9F8lfiTeXuj0RoPTrOg0NufmVf6qts"
@@ -142,13 +138,11 @@
                 if (row[2] === "Sun" && row[0] > 24 && (month === "October" || month === "March"))
                   classNames.push("summertime");
                 if (row[0] == today) classNames.push("selected");
-                if (row[0] >= lockdownStart.getDate()) classNames.push("lockdown");
                 const prevRow = rows[r > 0 ? r - 1 : 0];
                 return insertRow(row, prevRow, classNames.join(" "));
               })
               .join("")}</tbody>
           </table>
-          <h3>Note: No jamaat / congrgational prayers during lockdown from Thursday Nov 5, 2020</h3>
         `;
       };
     </script>
