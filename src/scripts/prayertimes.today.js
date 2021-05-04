@@ -3,7 +3,7 @@ import "../styles/prayertimes.today.css";
 window.onload = () => {
   const dateToday = new Date();
   const index = dateToday.getDate() + 1;
-  const range = `A${index}:R${index + 1}`;
+  const range = `A${index}:S${index + 1}`;
 
   const log = window.localStorage.getItem("debug") === "true" ? console.log : () => {};
 
@@ -51,6 +51,7 @@ window.onload = () => {
       islamicMonthNumber,
       firstJumah = "12:30",
       secondJumah = "13:10",
+      thirdJumah,
       unofficial,
     ] = row.map((val, i) => {
       const [hh, mm] = val.split(":");
@@ -98,6 +99,7 @@ window.onload = () => {
       unofficial,
       firstJumah,
       secondJumah,
+      thirdJumah,
     };
   };
 
@@ -118,7 +120,7 @@ window.onload = () => {
       second: "2-digit",
     })}`;
 
-    const islamicDateStr = `${today.islamicDate} ${today.islamicMonth} 1440 Hj`;
+    const islamicDateStr = `${today.islamicDate} ${today.islamicMonth} 1442 Hj`;
     const timeToMins = (t) => {
       const [h, m] = t
         .replace(/[^ -~]/g, "")
@@ -178,7 +180,7 @@ window.onload = () => {
       <td>${today.day === "Fri" ? "Jumah" : "Zuhr"}</td>
       <td>${today.dhurBegins}</td>
       <td class="dhuhur jamaat ${dhuhurClass}">${
-      today.day === "Fri" ? today.firstJumah + " / " + today.secondJumah : today.dhurJamaat
+      today.day === "Fri" ? today.firstJumah : today.dhurJamaat
     }</td>
     </tr>
     <tr>
@@ -198,7 +200,7 @@ window.onload = () => {
     <tr>
       <td>Jumah</td>
       <td class="jumah" colspan=2>
-        ${today.firstJumah} / ${today.secondJumah}
+        ${[today.firstJumah, today.secondJumah, today.thirdJumah].join(" / ")}
       </td>
     </tr>
   </tbody>
