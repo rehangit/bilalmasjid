@@ -122,7 +122,7 @@ window.onload = () => {
       second: "2-digit",
     })}`;
 
-    const islamicDayStr = `${today.islamicDay} ${today.islamicMonth} ${islamicYear} Hj`;
+    const islamicDayStr = `${today.islamicDay} ${today.islamicMonth} ${today.islamicYear} Hj`;
     const timeToMins = (t) => {
       const [h, m] = t
         .replace(/[^ -~]/g, "")
