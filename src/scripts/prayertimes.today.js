@@ -52,7 +52,7 @@ window.onload = () => {
       islamicYear,
       firstJumah = "12:30",
       secondJumah = "13:10",
-      thirdJumah,
+      thirdJumah = "",
       unofficial,
     ] = row.map((val, i) => {
       const [hh, mm] = val.split(":");
@@ -202,7 +202,7 @@ window.onload = () => {
     <tr>
       <td>Jumah</td>
       <td class="jumah" colspan=2>
-        ${[today.firstJumah, today.secondJumah, today.thirdJumah].join(" / ")}
+        ${[today.firstJumah, today.secondJumah, today.thirdJumah].filter(Boolean).join(" / ")}
       </td>
     </tr>
   </tbody>
