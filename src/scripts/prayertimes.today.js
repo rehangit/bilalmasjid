@@ -35,7 +35,7 @@ window.onload = () => {
   const getRowData = (row) => {
     const [
       date,
-      islamicDate,
+      islamicDay,
       day,
       fajarBegins,
       fajarJamaat,
@@ -49,6 +49,7 @@ window.onload = () => {
       ishaBegins,
       ishaJamaat,
       islamicMonthNumber,
+      islamicYear,
       firstJumah = "12:30",
       secondJumah = "13:10",
       thirdJumah,
@@ -82,7 +83,7 @@ window.onload = () => {
 
     return {
       date,
-      islamicDate,
+      islamicDay,
       day,
       fajarBegins,
       sunrise,
@@ -96,6 +97,7 @@ window.onload = () => {
       ishaBegins,
       ishaJamaat,
       islamicMonth,
+      islamicYear,
       unofficial,
       firstJumah,
       secondJumah,
@@ -120,7 +122,7 @@ window.onload = () => {
       second: "2-digit",
     })}`;
 
-    const islamicDateStr = `${today.islamicDate} ${today.islamicMonth} 1442 Hj`;
+    const islamicDayStr = `${today.islamicDay} ${today.islamicMonth} ${islamicYear} Hj`;
     const timeToMins = (t) => {
       const [h, m] = t
         .replace(/[^ -~]/g, "")
@@ -153,7 +155,7 @@ window.onload = () => {
 
     const table = `
 <div class="date english">${todaysDateStr}</div>
-<div class="date islamic">${islamicDateStr}</div>
+<div class="date islamic">${islamicDayStr}</div>
 <table class="table">
   <thead>
     <tr><th>Salah</th><th>Begins</th><th>Jamaat</th></tr>
