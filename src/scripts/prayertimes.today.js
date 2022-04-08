@@ -224,7 +224,7 @@ window.onload = () => {
   const params = new URL(document.location).searchParams;
   const sheetId = params.get("id") || "1qS2o3JQ07qFkUXMBvEZVZ3E8Z_mk0jMXXhxJkQ35LR8";
   const sheetName = params.get("name") || "calc-formatted";
-  const hue = params.get("hue") || 170;
+  const hue = params.get("hue") || "170";
   const key = params.get("key");
 
   if (!key) return console.error("Error: No API Key provided in the params");
