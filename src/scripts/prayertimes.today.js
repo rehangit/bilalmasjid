@@ -231,8 +231,8 @@ window.onload = () => {
 
   const urlToFetch = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}!${range}?key=${key}`;
   log({ urlToFetch });
-
-  root.style.setProperty('--hue', parseInt(hue));
+  const root = document.documentElement;
+  root.style.setProperty("--hue", parseInt(hue));
 
   const fetchFreshDataAndUpdate = () =>
     fetch(urlToFetch)
