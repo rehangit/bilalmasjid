@@ -50,8 +50,8 @@ window.onload = () => {
       ishaJamaat,
       islamicMonthNumber,
       islamicYear,
-      firstJumah = "12:30",
-      secondJumah = "13:10",
+      firstJumah = "",
+      secondJumah = "",
       thirdJumah = "",
       unofficial,
     ] = row.map((val, i) => {
@@ -230,7 +230,6 @@ window.onload = () => {
   if (!key) return console.error("Error: No API Key provided in the params");
 
   const urlToFetch = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}!${range}?key=${key}`;
-  log({ urlToFetch });
   const root = document.documentElement;
   root.style.setProperty("--hue", parseInt(hue));
 
