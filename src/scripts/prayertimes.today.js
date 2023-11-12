@@ -53,7 +53,6 @@ window.onload = () => {
       firstJumah = "",
       secondJumah = "",
       thirdJumah = "",
-      unofficial,
     ] = row.map((val, i) => {
       const [hh, mm] = val.split(":");
       if (mm) {
@@ -98,14 +97,13 @@ window.onload = () => {
       ishaJamaat,
       islamicMonth,
       islamicYear,
-      unofficial,
       firstJumah,
       secondJumah,
       thirdJumah,
     };
   };
 
-  function drawData({ data, dateString }, valid) {
+  function render({ data, dateString }, valid) {
     log(data, dateString, valid);
     const today = getRowData(data[0]);
     const tomorrow = getRowData(data[1] || data[0]);
@@ -131,27 +129,28 @@ window.onload = () => {
       return h * 60 + m;
     };
 
-    const calcStyles = (begins, jamaat, before = 0, after = 0, next) => {
+    const calcStyles = (time, before = 0, after = 0, next) => {
       const style = [];
       const now = timeToMins(new Date().toLocaleTimeString("en-GB", timeOptions).slice(0, 5));
-      const from = timeToMins(begins) - before;
-      const jamaatTime = timeToMins(jamaat);
-      const to = jamaatTime + after;
+      const timeInMins = timeToMins(time);
+      const from = timeInMins - before;
+      const to = timeInMins + after;
       style.push(from <= now && now < to ? "highlight" : "");
-      if (next && jamaatTime !== timeToMins(next)) style.push("changing");
+      if (next && timeInMins !== timeToMins(next)) style.push("changing");
       return style.join(" ");
     };
 
     // highlight which jamaat time it is now
-    const [sehriClass, dhuhurClass, asarClass, maghribClass, ishaClass] = [
-      calcStyles(today.fajarBegins, today.fajarJamaat, 30, 0),
-      calcStyles(today.dhurBegins, today.dhurJamaat, 0, 10),
-      calcStyles(today.asarBegins, today.asarJamaat, 0, 10, tomorrow.asarJamaat),
-      calcStyles(today.maghribBegins, today.maghribBegins, 10, 10),
-      calcStyles(today.ishaBegins, today.ishaJamaat, 0, 10, tomorrow.ishaJamaat),
-    ];
-    const legendClass =
-      asarClass.includes("changing") || ishaClass.includes("changing") ? "visible" : "";
+    const sehriClass = calcStyles(today.fajarBegins, 30, 0);
+    const fajarClass = calcStyles(today.fajarJamaat, 30, 5);
+    const dhuhurClass = calcStyles(today.dhurJamaat, 0, 10);
+    const asarClass = calcStyles(today.asarJamaat, 0, 10, tomorrow.asarJamaat);
+    const maghribClass = calcStyles(today.maghribBegins, 10, 10);
+    const ishaClass = calcStyles(today.ishaJamaat, 0, 10, tomorrow.ishaJamaat);
+
+    const legendClass = [fajarClass, asarClass, ishaClass].some((c) => c.includes("changing"))
+      ? "visible"
+      : "";
 
     const table = `
 <div class="date english">${todaysDateStr}</div>
@@ -164,9 +163,9 @@ window.onload = () => {
     <tr>
       <td>Fajar</td>
       <td class="${sehriClass}">${today.fajarBegins}</td>
-      <td>
+      <td class="${fajarClass}">
         <span class="fajar jamaat">${today.fajarJamaat}</span>
-        <span class="unofficial">${today.unofficial}</span>
+        <span class="fajar jamaat tomorrow">${tomorrow.fajarJamaat}</span>
       </td>
     </tr>
     <tr>
@@ -188,8 +187,11 @@ window.onload = () => {
     <tr>
       <td>Asar</td>
       <td>${today.asarBegins}</td>
-      <td class="asar jamaat ${asarClass}">${today.asarJamaat}</td>
-    </tr>
+      <td class="asar jamaat ${asarClass}">
+        <span>${today.asarJamaat}</span>
+        <span class="tomorrow">${tomorrow.asarJamaat}</span>
+      </td>
+      </tr>
     <tr>
       <td>Maghrib</td>
       <td colspan=2 class="maghrib ${maghribClass}">${today.maghribBegins}</td>
@@ -197,8 +199,11 @@ window.onload = () => {
     <tr>
       <td>Isha</td>
       <td>${today.ishaBegins}</td>
-      <td class="isha jamaat ${ishaClass}">${today.ishaJamaat}</td>
-    </tr>
+      <td class="isha jamaat ${ishaClass}">
+        <span>${today.ishaJamaat}</span>
+        <span class="tomorrow">${tomorrow.ishaJamaat}</span>
+      </td>
+      </tr>
     <tr>
       <td>Jumah</td>
       <td class="jumah" colspan=2>
@@ -233,7 +238,7 @@ window.onload = () => {
   const root = document.documentElement;
   root.style.setProperty("--hue", parseInt(hue));
 
-  const fetchFreshDataAndUpdate = () =>
+  const fetchFreshData = () =>
     fetch(urlToFetch)
       .then((res) => res.json())
       .then((res) => {
@@ -245,11 +250,11 @@ window.onload = () => {
       })
       .catch(log);
 
-  const render = () => {
+  const update = () => {
     const valid = isValid();
-    stored && stored.data && drawData(stored, valid);
-    if (!valid) fetchFreshDataAndUpdate().then(() => drawData(stored, true));
+    stored && stored.data && render(stored, valid);
+    if (!valid) fetchFreshData().then(() => render(stored, true));
   };
-  render();
-  window.setInterval(render, 1000);
+  update();
+  window.setInterval(update, 1000);
 };
