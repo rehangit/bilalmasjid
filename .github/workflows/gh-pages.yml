@@ -1,4 +1,3 @@
-# Sample workflow to build and deploy to github pages
 name: Deploy GitHub Pages 
 
 on:
@@ -22,13 +21,12 @@ jobs:
         uses: actions/configure-pages@v4
       - name: Build 
         run: |
-          npm run install
+          npm i
           npm run build
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
-  # Deployment job
   deploy:
     environment:
       name: github-pages
