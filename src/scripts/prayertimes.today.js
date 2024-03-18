@@ -5,7 +5,7 @@ window.onload = () => {
   const index = dateToday.getDate() + 1;
   const range = `A${index}:S${index + 1}`;
 
-  const log = window.localStorage.getItem("debug") === "true" ? console.log : () => {};
+  const log = window.localStorage.getItem("debug") === "true" ? console.log : () => { };
 
   // poll frequency: download data from server with this frequency
   // 8 - 11 = once a day
@@ -142,7 +142,7 @@ window.onload = () => {
 
     // highlight which jamaat time it is now
     const sehriClass = calcStyles(today.fajarBegins, 30, 0);
-    const fajarClass = calcStyles(today.fajarJamaat, 30, 5);
+    const fajarClass = calcStyles(today.fajarJamaat, 30, 5, tomorrow.fajarJamaat);
     const dhuhurClass = calcStyles(today.dhurJamaat, 0, 10);
     const asarClass = calcStyles(today.asarJamaat, 0, 10, tomorrow.asarJamaat);
     const maghribClass = calcStyles(today.maghribBegins, 10, 10);
@@ -180,9 +180,8 @@ window.onload = () => {
     <tr>
       <td>${today.day === "Fri" ? "Jumah" : "Zuhr"}</td>
       <td>${today.dhurBegins}</td>
-      <td class="dhuhur jamaat ${dhuhurClass}">${
-      today.day === "Fri" ? today.firstJumah : today.dhurJamaat
-    }</td>
+      <td class="dhuhur jamaat ${dhuhurClass}">${today.day === "Fri" ? today.firstJumah + " / " + today.secondJumah : today.dhurJamaat
+      }</td>
     </tr>
     <tr>
       <td>Asar</td>
